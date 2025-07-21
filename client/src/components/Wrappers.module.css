@@ -1,0 +1,23 @@
+.anchor-wrapper--container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.5rem;
+}
+
+.anchor-wrapper--container:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+  color: var(--brand);
+}
+
+.anchor-wrapper--container:hover {
+  opacity: 1;
+  cursor: pointer;
+  color: var(--brand);
+}
+
+.anchor-wrapper--container:active {
+  opacity: 0.8;
+}

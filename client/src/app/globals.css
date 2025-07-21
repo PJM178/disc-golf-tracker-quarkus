@@ -1,0 +1,277 @@
+:root {
+  /* These are from the book as is */
+  /* Contrast to fill at least 4.5:1 */
+  --brand: hsl(230, 64.8%, 57.4%);
+  --brand-parameters: 230, 64.8%, 57.4%;
+  /* Contrast to fill at least 4.5:1 */
+  --text-strong: hsl(230, 39.9%, 17.2%);
+  /* Contrast to fill at least 4.5:1 */
+  --text-weak: hsl(230, 15.6%, 41.5%);
+  /* Contrast to fill at least 3:1 */
+  --stroke-strong: hsl(230, 17.6%, 57.5%);
+  --stroke-weak: hsl(230, 28.1%, 91.6%);
+  --fill: hsl(230, 32.9%, 97%);
+  --background: hsl(0, 0%, 100%);
+  --error-text: hsla(0, 55.7%, 50.3%, 1);
+  --error-stroke-strong: hsla(0, 56%, 50.3%, 0.8);
+  --error-stroke-weak: hsla(0, 55.7%, 50.3%, 0.2);
+  --error-fill: hsla(0, 55.7%, 50.3%, 0.05);
+  --warning-text: hsla(42, 69.5%, 33%, 1);
+  --warning-stroke-strong: hsla(42, 69.5%, 33%, 0.8);
+  --warning-stroke-weak: hsla(42, 69.5%, 33%, 0.2);
+  --warning-fill: hsla(42, 69.5%, 33%, 0.05);
+  --success-text: hsla(162, 90.5%, 25.2%, 1);
+  --success-stroke-strong: hsla(162, 90.5%, 25.2%, 0.8);
+  --success-stroke-weak: hsla(162, 90.5%, 25.2%, 0.2);
+  --success-fill: hsla(162, 90.5%, 25.2%, 0.05);
+  --skeleton-loading-background: #e7dcdc;
+  --padding: 0.3rem;
+  --leading-player-score-color: 0, 100, 0;
+}
+
+:root[data-theme="light"] {
+  /* These are from the book as is */
+  /* Contrast to fill at least 4.5:1 */
+  --brand: hsl(230, 64.8%, 57.4%);
+  --brand-parameters: 230, 64.8%, 57.4%;
+  /* Contrast to fill at least 4.5:1 */
+  --text-strong: hsl(230, 39.9%, 17.2%);
+  /* Contrast to fill at least 4.5:1 */
+  --text-weak: hsl(230, 15.6%, 41.5%);
+  /* Contrast to fill at least 3:1 */
+  --stroke-strong: hsl(230, 17.6%, 57.5%);
+  --stroke-weak: hsl(230, 28.1%, 91.6%);
+  --fill: hsl(230, 32.9%, 97%);
+  --background: hsl(0, 0%, 100%);
+  --error-text: hsla(0, 55.7%, 50.3%, 1);
+  --error-stroke-strong: hsla(0, 56%, 50.3%, 0.8);
+  --error-stroke-weak: hsla(0, 55.7%, 50.3%, 0.2);
+  --error-fill: hsla(0, 55.7%, 50.3%, 0.05);
+  --warning-text: hsla(42, 69.5%, 33%, 1);
+  --warning-stroke-strong: hsla(42, 69.5%, 33%, 0.8);
+  --warning-stroke-weak: hsla(42, 69.5%, 33%, 0.2);
+  --warning-fill: hsla(42, 69.5%, 33%, 0.05);
+  --success-text: hsla(162, 90.5%, 25.2%, 1);
+  --success-stroke-strong: hsla(162, 90.5%, 25.2%, 0.8);
+  --success-stroke-weak: hsla(162, 90.5%, 25.2%, 0.2);
+  --success-fill: hsla(162, 90.5%, 25.2%, 0.05);
+  --skeleton-loading-background: #e7dcdc;
+  --padding: 0.3rem;
+  --leading-player-score-color: 0, 100, 0;
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  /* Contrast to fill at least 4.5:1 */
+  --brand: hsl(230, 95.2%, 79.2%);
+  --brand-parameters: 230, 95.2%, 79.2%;
+  /* Contrast to fill at least 4.5:1 */
+  --text-strong: hsl(230, 0%, 100%);
+  /* Contrast to fill at least 4.5:1 */
+  --text-weak: hsl(230, 12.4%, 82.9%);
+  /* Contrast to fill at least 3:1 */
+  --stroke-strong: hsl(230, 8.5%, 61.7%);
+  --stroke-weak: hsl(230, 8.1%, 23.1%);
+  --fill: hsl(230, 11.1%, 13.5%);
+  --background: hsl(230, 17.6%, 8.5%);
+  --error-text: hsla(0, 100%, 80.5%, 1);
+  --error-stroke-strong: hsla(0, 100%, 80.5%, 0.8);
+  --error-stroke-weak: hsla(0, 100%, 80.5%, 0.2);
+  --error-fill: hsla(0, 100%, 80.5%, 0.05);
+  --warning-text: hsla(42, 64.7%, 66%, 1);
+  --warning-stroke-strong: hsla(42, 64.7%, 66%, 0.8);
+  --warning-stroke-weak: hsla(42, 64.7%, 66%, 0.2);
+  --warning-fill: hsla(42, 64.7%, 66%, 0.05);
+  --success-text: hsla(162, 41.5%, 62.4%, 1);
+  --success-stroke-strong: hsla(162, 41.5%, 62.4%, 0.8);
+  --success-stroke-weak: hsla(162, 41.5%, 62.4%, 0.2);
+  --success-fill: hsla(162, 41.5%, 62.4%, 0.05);
+  --skeleton-loading-background: rgba(255, 255, 255, 0.13);
+  --padding: 0.3rem;
+  --leading-player-score-color: 139, 195, 74;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Contrast to fill at least 4.5:1 */
+    --brand: hsl(230, 95.2%, 79.2%);
+    --brand-parameters: 230, 95.2%, 79.2%;
+    /* Contrast to fill at least 4.5:1 */
+    --text-strong: hsl(230, 0%, 100%);
+    /* Contrast to fill at least 4.5:1 */
+    --text-weak: hsl(230, 12.4%, 82.9%);
+    /* Contrast to fill at least 3:1 */
+    --stroke-strong: hsl(230, 8.5%, 61.7%);
+    --stroke-weak: hsl(230, 8.1%, 23.1%);
+    --fill: hsl(230, 11.1%, 13.5%);
+    --background: hsl(230, 17.6%, 8.5%);
+    --error-text: hsla(0, 100%, 80.5%, 1);
+    --error-stroke-strong: hsla(0, 100%, 80.5%, 0.8);
+    --error-stroke-weak: hsla(0, 100%, 80.5%, 0.2);
+    --error-fill: hsla(0, 100%, 80.5%, 0.05);
+    --warning-text: hsla(42, 64.7%, 66%, 1);
+    --warning-stroke-strong: hsla(42, 64.7%, 66%, 0.8);
+    --warning-stroke-weak: hsla(42, 64.7%, 66%, 0.2);
+    --warning-fill: hsla(42, 64.7%, 66%, 0.05);
+    --success-text: hsla(162, 41.5%, 62.4%, 1);
+    --success-stroke-strong: hsla(162, 41.5%, 62.4%, 0.8);
+    --success-stroke-weak: hsla(162, 41.5%, 62.4%, 0.2);
+    --success-fill: hsla(162, 41.5%, 62.4%, 0.05);
+    --skeleton-loading-background: rgba(255, 255, 255, 0.13);
+    --padding: 0.3rem;
+    --leading-player-score-color: 139, 195, 74;
+    color-scheme: dark;
+  }
+}
+
+body {
+  background-color: var(--background);
+  color: var(--text-strong);
+  transition: background-color 300ms, color 300ms;
+}
+
+@media only screen and (max-width: 600px) {
+
+  /* Styles for screens with width less than 600px */
+  body {
+    margin: unset;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  color: var(--text-strong);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+h2 {
+  word-break: break-word;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
+}
+
+header {
+  display: flex;
+  justify-content: center;
+  padding: var(--padding);
+}
+
+#root {
+  width: 600px;
+  align-self: center;
+  justify-self: center;
+}
+
+@media only screen and (max-width: 600px) {
+  body {
+    padding: 5px;
+  }
+
+  #root {
+    width: 100%;
+  }
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: var(--padding);
+  gap: 0.75rem;
+}
+
+.title--container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.selected {
+  color: var(--brand);
+}
+
+.material-symbol--container {
+  height: 24px;
+  width: 24px;
+}
+
+.loading-icon {
+  --rotation-offset: 0deg;
+  /* fill: #9aa0a6; */
+  fill: var(--text-strong);
+  transform-origin: center;
+  animation: rotateIcon 650ms linear infinite;
+  height: 4rem;
+  filter: brightness(0.6);
+}
+
+@keyframes rotateIcon {
+  0% {
+    transform: rotate(var(--rotation-offset));
+    /* Start from the offset */
+  }
+
+  100% {
+    transform: rotate(calc(360deg + var(--rotation-offset)));
+    /* Complete the 360-degree rotation with the offset */
+  }
+}
+
+.material-symbols-outlined.open {
+  transform: rotate(180deg);
+  transition: transform linear 75ms;
+}
+
+.material-symbols-outlined.closed {
+  transform: rotate(0deg);
+  transition: transform linear 75ms;
+}
+
+/* Google fonts & Icons - START */
+
+.material-symbols-outlined {
+  font-variation-settings:
+    'FILL' 1,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+  transform-origin: center;
+}
+
+.material-symbols-outlined--not-filled {
+  font-variation-settings:
+    'FILL' 0
+}
+
+/* Google fonts & Icons - END */

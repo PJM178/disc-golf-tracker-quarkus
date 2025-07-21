@@ -1,0 +1,1 @@
+This is a purely client side, static disc golf tracker app. Optimized mainly for mobile devices.  GitHub pages: https://pjm178.github.io/disc-golf-tracker/.

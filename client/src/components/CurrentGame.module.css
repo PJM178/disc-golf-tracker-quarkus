@@ -1,0 +1,276 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: var(--padding);
+}
+
+.title--container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.current-game--no-game {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem 0;
+}
+
+.current-game--new-game {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--padding);
+}
+
+.current-game--loading-container {
+  padding: 1rem 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.new-game-form--container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.new-game-form--title {
+  position: relative;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+}
+
+.new-game-form--title-symbol--container {
+  margin-left: auto;
+  padding: 5px;
+  display: flex;
+}
+
+.new-game-form--title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -5px;
+  height: 4px;
+  width: 100%;
+  background-color: #0070f3;
+  border-radius: 2px;
+}
+
+.new-game-form--form--container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.new-game-form--form--input-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--padding);
+}
+
+.new-game-form--form--players-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.new-game-form--form--players-input {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.new-game-form--form--players-remove-icon {
+  display: flex;
+  padding: 2px;
+  align-items: center;
+  justify-content: center;
+}
+
+.new-game-form--form--input-field-row {
+  display: flex;
+  gap: var(--padding);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.new-game-form--form--add-players {
+  display: flex;
+  gap: var(--padding);
+  align-items: center;
+  width: fit-content;
+}
+
+.new-game-form--form--button-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.running-game--container {
+  display: flex;
+  width: 100%;
+  padding: var(--padding);
+  flex-direction: column;
+}
+
+.running-game--game-info {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+}
+
+.running-game--game-name-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 0.5rem;
+}
+
+.running-game--game-name-name {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.running-game--game-name-symbol {
+  display: flex;
+  margin-left: auto;
+}
+
+.running-game--game-name-date {
+  font-style: italic;
+}
+
+.running-game--game-name-container-wrapper:hover {
+  color: var(--brand);
+}
+
+.running-game--game-name-container-wrapper:active {
+  opacity: 0.8;
+}
+
+.running-game--game-info-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.running-game--game-info-settings {
+  display: flex;
+}
+
+.running-game--game-location {
+  margin-left: auto;
+}
+
+.running-game--game-info-settings--dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.running-game--game-info-settings--dialog-content--buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.running-game--hole-list {
+  display: flex;
+  overflow: auto;
+}
+
+.running-game--hole-list--container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.running-game--hole-info {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  flex: 0 0 auto;
+  margin: 0 1px 0 0;
+}
+
+.running-game--hole-info--name {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: var(--padding) 0;
+}
+
+.running-game--hole-info--name-input {
+  width: 4rem;
+}
+
+.running-game--hole-info--name-button--container {
+  margin-left: 0.3rem;
+}
+
+.running-game--hole-info--name-button {
+  display: flex;
+  padding: var(--padding);
+}
+
+.running-game--hole-info.disabled> :not(.running-game--hole-info--finish-game--container) {
+  opacity: 0.5;
+}
+
+.running-game--hole-players--container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.running-game--hole-players--grid-header {
+  display: contents;
+}
+
+.running-game--hole-players--player {
+  display: contents;
+}
+
+.running-game--hole-players--player--name {
+  display: flex;
+  align-items: center;
+}
+
+.running-game--hole-players--player--score {
+  display: flex;
+  align-items: center;
+}
+
+.running-game--hole-players--buttons--container {
+  display: flex;
+  justify-content: center;
+}
+
+.running-game--hole-players--buttons--button {
+  padding: var(--padding);
+  display: flex;
+}
+
+.running-game--hole-players--buttons--button.disabled {
+  filter: brightness(0.3);
+}
+
+.running-game--hole-info--finish-game--container {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.running-game--hole-info--finish-game--button {
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  padding: var(--padding);
+  gap: 0.25rem;
+}

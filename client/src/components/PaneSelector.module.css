@@ -1,0 +1,42 @@
+.pane-selector--container {
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  justify-content: space-evenly;
+}
+
+.pane-selector--symbol-container {
+  display: flex;
+  padding: calc(var(--padding) + 1rem);
+  position: relative;
+  flex-grow: 1;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 0.1rem;
+  width: 100%;
+}
+
+.pane-selector--button {
+  flex-grow: 1 !important;
+  background-color: var(--background);
+}
+
+.pane-selector--symbol-container:global(.selected)::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 0.1rem;
+  width: 100%;
+  background-color: var(--brand);
+  z-index: 1;
+}
+
+@media only screen and (min-width: 900px) {
+  .pane-selector--container {
+    position: relative;
+  }
+}

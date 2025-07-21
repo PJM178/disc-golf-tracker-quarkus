@@ -1,0 +1,53 @@
+.running-game--hole-players--container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  word-break: break-word;
+  gap: 0.3rem;
+}
+
+.running-game--hole-players--grid-header {
+  display: contents;
+}
+
+.running-game--hole-players--player {
+  display: contents;
+}
+
+.running-game--hole-players--player--name {
+  display: flex;
+  align-items: center;
+  min-height: 30px;
+}
+
+.running-game--hole-players--player--score {
+  display: flex;
+  align-items: center;
+}
+
+.running-game--hole-players--leading-player--container {
+  background-color: rgba(var(--leading-player-score-color), 0.2);
+  border-radius: 999em;
+  padding: 0.25rem 0.5rem;
+  border: solid rgba(var(--leading-player-score-color), 0.8) 1px;
+}
+
+.running-game--hole-players--leading-player {
+  color: rgb(var(--leading-player-score-color));
+  border-radius: 50%;
+}
+
+.running-game--hole-players--buttons--container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.running-game--hole-players--buttons--button {
+  padding: var(--padding);
+  display: flex;
+  align-items: center;
+}
+
+.running-game--hole-players--buttons--button.disabled {
+  filter: brightness(0.3);
+}

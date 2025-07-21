@@ -1,0 +1,42 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: var(--padding);
+}
+
+.title--container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.symbol {
+  margin-left: auto;
+  transition: transform 100ms linear;
+}
+
+.symbol.open {
+  transform: rotate(180deg);
+}
+
+.history-list--game-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  list-style: none;
+}
+
+.history-list--game-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.history-list--no-games {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: lightgray;
+  padding: 1rem 0;
+}

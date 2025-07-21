@@ -1,0 +1,322 @@
+.button--icon {
+  display: flex;
+  color: inherit;
+  /* or set to specific color like var(--text-default) */
+  text-decoration: none;
+  text-underline-offset: initial;
+}
+
+.button--base {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0.75rem;
+  width: fit-content;
+}
+
+.button--base:focus-visible,
+.button--wrapper:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+.button--base:hover {
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+.button--base:active {
+  opacity: 1;
+}
+
+.button--base:disabled {
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+
+.button--wrapper {
+  all: unset;
+  cursor: pointer;
+}
+
+.button--wrapper:active:not(:disabled) {
+  opacity: 0.8;
+}
+
+.button--wrapper:focus-visible {
+  color: var(--brand);
+}
+
+.button--wrapper:disabled {
+  cursor: not-allowed;
+}
+
+.button--wrapper:hover:not(:disabled)>* {
+  color: var(--brand);
+}
+
+.button--primary {
+  background-color: var(--brand);
+  border-radius: 5px;
+  border: 0;
+  border-width: 2px;
+  border-style: solid;
+  border-color: var(--brand);
+  padding: 0.5rem;
+}
+
+.button--primary * {
+  color: var(--background);
+}
+
+.button--secondary {
+  background-color: transparent;
+  border-radius: 5px;
+  border: 0;
+  border-width: 2px;
+  border-style: solid;
+  border-color: var(--brand);
+}
+
+.button--secondary * {
+  color: var(--brand);
+}
+
+.button--tertiary {
+  background-color: transparent;
+  border: 0;
+  border-radius: 5px;
+  border-width: 2px;
+  border-style: solid;
+  border-color: transparent;
+}
+
+.button--tertiary * {
+  color: var(--brand);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.button--tertiary .button--icon,
+.button--tertiary .button--icon * {
+  text-decoration: none;
+}
+
+.primary-button--disabled.primary-button--filled {
+  background-color: var(--stroke-weak) !important;
+  border-color: var(--stroke-weak) !important;
+  ;
+  pointer-events: none;
+}
+
+.primary-button--disabled.primary-button--outlined {
+  border-color: var(--stroke-weak) !important;
+  color: var(--stroke-weak) !important;
+  pointer-events: none;
+}
+
+.primary-button--disabled.primary-button--text {
+  color: var(--stroke-weak) !important;
+  pointer-events: none;
+}
+
+.primary-button--disabled:hover {
+  cursor: default;
+}
+
+.primary-button--filled {
+  background-color: var(--brand);
+  border: 2px solid var(--brand);
+  color: var(--fill);
+}
+
+.primary-button--filled:hover {
+  background-color: var(--text-weak);
+  border: 2px solid var(--text-weak);
+  color: var(--fill);
+}
+
+.primary-button--filled:active {
+  background-color: var(--text-strong);
+  border: 2px solid var(--text-strong);
+  color: var(--fill);
+}
+
+.primary-button--outlined {
+  background-color: transparent;
+  border: 2px solid var(--brand);
+  color: var(--brand);
+}
+
+.primary-button--outlined:hover {
+  background-color: transparent;
+  border: 2px solid var(--text-weak);
+  color: var(--text-weak);
+}
+
+.primary-button--outlined:active {
+  background-color: transparent;
+  border: 2px solid var(--text-strong);
+  color: var(--text-strong);
+}
+
+.primary-button--text {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--brand);
+}
+
+.primary-button--text:hover {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--text-weak);
+}
+
+.primary-button--text:active {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--text-strong);
+}
+
+.primary-button--icon {
+  display: flex;
+}
+
+.primary-button--icon.end {
+  margin-left: 0.25rem;
+}
+
+.primary-button--icon.start {
+  margin-right: 0.25rem;
+}
+
+.switch--container {
+  display: inline-flex;
+  width: 58px;
+  height: 38px;
+  padding: 12px;
+  box-sizing: border-box;
+  align-items: center;
+  position: relative;
+}
+
+.switch--container.disabled {
+  opacity: 0.4;
+}
+
+.switch--container:hover {
+  cursor: pointer;
+}
+
+.switch--container.loading>*:not(.loading-icon--container) {
+  visibility: hidden;
+}
+
+.switch--tack:not(.switch--container.disabled)::after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-color: var(--text-strong);
+  border-radius: 50%;
+  opacity: 0.3;
+}
+
+.switch--container.disabled .switch--tack::after {
+  all: unset;
+}
+
+.switch--container:hover .switch--tack::after {
+  transform: scale(2);
+}
+
+.switch--container.disabled:hover {
+  cursor: not-allowed;
+}
+
+.switch--container:hover .switch--tack-border {
+  display: block;
+}
+
+.switch--container:hover .switch--tack-border.disabled {
+  display: none;
+}
+
+.switch--background {
+  border-radius: 7px;
+  width: 100%;
+  height: 100%;
+  background-color: var(--stroke-weak);
+}
+
+.switch--background.active {
+  background-color: var(--text-weak);
+}
+
+.switch--tack-container {
+  position: absolute;
+  transition: transform linear 100ms;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 20px;
+  height: 20px;
+}
+
+.switch--tack-container.active {
+  transform: translateX(14px);
+}
+
+.switch--tack {
+  border-radius: 50%;
+  background-color: var(--stroke-strong);
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.switch--tack.active {
+  background-color: var(--text-strong);
+}
+
+.switch--tack-border {
+  border-radius: 50%;
+  background-color: rgba(211, 211, 211, 0.4);
+  padding: 8px;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  display: none;
+}
+
+.loading-icon--container {
+  display: flex;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.loading-icon {
+  --rotation-offset: 0deg;
+  /* fill: #9aa0a6; */
+  fill: var(--text-strong);
+  transform-origin: center;
+  animation: rotateIcon 650ms linear infinite;
+  height: 2rem;
+  filter: brightness(0.6);
+}
+
+@keyframes rotateIcon {
+  0% {
+    transform: rotate(var(--rotation-offset));
+    /* Start from the offset */
+  }
+
+  100% {
+    transform: rotate(calc(360deg + var(--rotation-offset)));
+    /* Complete the 360-degree rotation with the offset */
+  }
+}

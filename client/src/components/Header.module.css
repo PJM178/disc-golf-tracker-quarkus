@@ -1,0 +1,12 @@
+.container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  justify-content: center;
+  width: 100%;
+}
+
+.symbol {
+  position: absolute;
+  right: var(--padding);
+}

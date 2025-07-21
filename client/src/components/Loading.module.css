@@ -1,0 +1,42 @@
+.skeleton-text {
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.skeleton-text::before {
+  content: " ";
+  display: inline-block;
+}
+
+.skeleton-circular {
+  border-radius: 50%;
+}
+
+.skeleton-rectangular {
+  border-radius: unset;
+}
+
+.skeleton-rounded {
+  border-radius: 4px;
+}
+
+.skeleton-base {
+  width: 100%;
+  height: auto;
+  background-color: var(--skeleton-loading-background);
+  animation: 2000ms ease-in-out 500ms infinite normal none running skeletonPulse
+}
+
+@keyframes skeletonPulse {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}

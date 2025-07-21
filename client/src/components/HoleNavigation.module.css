@@ -1,0 +1,5 @@
+.running-game--hole-list--nav-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
