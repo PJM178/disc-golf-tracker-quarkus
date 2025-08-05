@@ -1,0 +1,1 @@
+One idea is to have sort of virtual courses, where user can play a course maybe alone or in group and then the result is loaded for anyone who loads the game and then can play the game based on the previous result. Sort of like in some driving games you can drive against a ghost driver of previous completion of the course.
