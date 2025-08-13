@@ -2,22 +2,35 @@
 
 import { Button } from "@/components/Buttons";
 import styles from "./HamburgerMenu.module.css";
+import { useState } from "react";
+import DropdownMenu from "@/components/DropdownMenu";
 
 const HamburgerMenu = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+
+  const handleDropdownMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
   return (
-    <Button
-      variant="wrapper"
-      onClick={() => console.log("click")}
-      aria-haspopup="dialog"
-      className={styles["button"]}
+    <div
+      className={styles["container"]}
     >
-      <span
-        className={`material-symbol--container material-symbols-outlined`.trim()}
-        aria-hidden={true}
+      <Button
+        variant="wrapper"
+        onClick={handleDropdownMenu}
+        aria-haspopup="dialog"
+        className={styles["button"]}
       >
-        menu
-      </span>
-    </Button>
+        <span
+          className={`material-symbol--container material-symbols-outlined`.trim()}
+          aria-hidden={true}
+        >
+          menu
+        </span>
+      </Button>
+      {isMenuOpen && <DropdownMenu />}
+    </div>
   );
 };
 
