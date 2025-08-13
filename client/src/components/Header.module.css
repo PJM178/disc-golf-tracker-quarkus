@@ -10,3 +10,7 @@
   position: absolute;
   right: var(--padding);
 }
+
+.header--name {
+  position: absolute;
+}
