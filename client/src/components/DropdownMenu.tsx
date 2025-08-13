@@ -1,11 +1,19 @@
 import styles from "./DropdownMenu.module.css";
+import React from "react";
 
-const DropdownMenu = () => {
+interface DropdownMenuProps {
+  children: React.ReactNode;
+}
+
+const DropdownMenu = (props: DropdownMenuProps) => {
+  const childArray = React.Children.toArray(props.children);
+
   return (
     <div className={styles["container"]}>
       <ul>
-        <li>item 1</li>
-        <li>item 2</li>
+        {childArray.map((child, index) => (
+          <li key={index}>{child}</li>
+        ))}
       </ul>
     </div>
   );

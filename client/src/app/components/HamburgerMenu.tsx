@@ -12,6 +12,8 @@ const HamburgerMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+
+
   return (
     <div
       className={styles["container"]}
@@ -29,7 +31,17 @@ const HamburgerMenu = () => {
           menu
         </span>
       </Button>
-      {isMenuOpen && <DropdownMenu />}
+      {isMenuOpen &&
+        <DropdownMenu>
+          <div>
+            <div>
+              menu item 1
+            </div>
+          </div>
+          <div>
+            menu item 2
+          </div>
+        </DropdownMenu>}
     </div>
   );
 };
