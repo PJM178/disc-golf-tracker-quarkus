@@ -7,12 +7,12 @@ import DropdownMenu from "@/components/DropdownMenu";
 
 const HamburgerMenu = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
-  const handleDropdownMenu = () => {
+  const handleDropdownMenu = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setIsMenuOpen(!isMenuOpen);
+    setAnchorEl(e.currentTarget);
   };
-
-
 
   return (
     <div
@@ -31,17 +31,19 @@ const HamburgerMenu = () => {
           menu
         </span>
       </Button>
-      {isMenuOpen &&
-        <DropdownMenu>
+      <DropdownMenu
+        anchorElement={anchorEl}
+        open={isMenuOpen}
+      >
+        <div>
           <div>
-            <div>
-              menu item 1
-            </div>
+            menu item 1
           </div>
-          <div>
-            menu item 2
-          </div>
-        </DropdownMenu>}
+        </div>
+        <div>
+          menu item 2
+        </div>
+      </DropdownMenu>
     </div>
   );
 };

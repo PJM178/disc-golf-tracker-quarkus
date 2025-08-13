@@ -129,6 +129,7 @@ body {
   background-color: var(--background);
   color: var(--text-strong);
   transition: background-color 300ms, color 300ms;
+  position: relative;
 }
 
 @media only screen and (max-width: 600px) {
