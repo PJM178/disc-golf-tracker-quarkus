@@ -24,13 +24,19 @@ const DropdownMenu = (props: DropdownMenuProps) => {
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     e.preventDefault();
-    console.log(e.key);
+
     if (e.key.toLowerCase() === "escape") {
       handleClose();
     }
 
     if (e.key.toLowerCase() === "arrowdown") {
       if (listRef.current) {
+        if (currentIndexRef.current < listRef.current.children.length - 1) {
+          currentIndexRef.current += 1;
+        } else {
+          currentIndexRef.current = 0;
+        }
+
         listRef.current.children[currentIndexRef.current].classList.add(styles["active"]);
 
         if (currentIndexRef.current > 0) {
@@ -40,12 +46,6 @@ const DropdownMenu = (props: DropdownMenuProps) => {
         if (currentIndexRef.current === 0) {
           listRef.current.children[listRef.current.children.length - 1].classList.remove(styles["active"]);
         }
-
-        if (currentIndexRef.current < listRef.current.children.length - 1) {
-          currentIndexRef.current += 1;
-        } else {
-          currentIndexRef.current = 0;
-        }
       }
     } else if (e.key.toLowerCase() === "arrowup") {
       if (listRef.current) {
@@ -54,10 +54,10 @@ const DropdownMenu = (props: DropdownMenuProps) => {
     }
 
     if (e.key.toLowerCase() === "enter") {
-      if (listRef.current && listRef.current.children[currentIndexRef.current].children[0] instanceof HTMLElement) {
-        (listRef.current.children[currentIndexRef.current - 1 < 0 ? 0 : currentIndexRef.current - 1].children[0] as HTMLElement).click();
+      if (listRef.current && listRef.current.children[currentIndexRef.current - 1 < 0 ? 0 : currentIndexRef.current].children[0] instanceof HTMLElement) {
+        (listRef.current.children[currentIndexRef.current - 1 < 0 ? 0 : currentIndexRef.current].children[0] as HTMLElement).click();
       }
-
+      console.log(currentIndexRef.current);
       handleClose();
     }
   }, [handleClose, currentIndexRef]);
@@ -76,7 +76,7 @@ const DropdownMenu = (props: DropdownMenuProps) => {
       document.getElementById("root")?.removeAttribute("inert");
       console.log("here");
     }
-    
+
   }, [props.open, props.anchorElement, handleKeyDown]);
 
   if (!props.open || !props.anchorElement) return;

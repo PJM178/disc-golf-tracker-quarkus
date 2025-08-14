@@ -68,15 +68,11 @@ const HamburgerMenu = () => {
               className={`material-symbol--container material-symbols-outlined`.trim()}
               aria-hidden={true}
             >
-              account_circle
+              strategy
             </span>
-            <span>Koti</span>
+            <span>Peli</span>
           </div>
         </Link>
-        <div className={styles["list-item"]}>
-          asd
-          </div>
-          1
       </DropdownMenu>
     </div>
   );

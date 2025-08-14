@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 // When needing to use a symbol somewhere in the app, add it first here
 // Only works when in alphabetical order so maybe sort them in href
 const iconList = ["expand_content", "collapse_content", "menu", "add", "close", "person_remove", "person_add", "arrow_circle_up",
-  "arrow_circle_down", "check_circle", "settings", "home", "history", "open_in_new", "edit", "account_circle"];
+  "arrow_circle_down", "check_circle", "settings", "home", "history", "open_in_new", "edit", "account_circle", "strategy"];
 
 export default function RootLayout({
   children,
