@@ -77,6 +77,7 @@
   --error-text: hsla(0, 100%, 80.5%, 1);
   --error-stroke-strong: hsla(0, 100%, 80.5%, 0.8);
   --error-stroke-weak: hsla(0, 100%, 80.5%, 0.2);
+  --stroke-weak--lighter: hsl(230, 8.1%, 40%);
   --error-fill: hsla(0, 100%, 80.5%, 0.05);
   --warning-text: hsla(42, 64.7%, 66%, 1);
   --warning-stroke-strong: hsla(42, 64.7%, 66%, 0.8);
@@ -104,6 +105,7 @@
     /* Contrast to fill at least 3:1 */
     --stroke-strong: hsl(230, 8.5%, 61.7%);
     --stroke-weak: hsl(230, 8.1%, 23.1%);
+    --stroke-weak--lighter: hsl(230, 8.1%, 40%);
     --fill: hsl(230, 11.1%, 13.5%);
     --background: hsl(230, 17.6%, 8.5%);
     --error-text: hsla(0, 100%, 80.5%, 1);

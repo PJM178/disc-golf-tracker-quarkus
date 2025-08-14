@@ -2,8 +2,9 @@
 
 import { Button } from "@/components/Buttons";
 import styles from "./HamburgerMenu.module.css";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import DropdownMenu from "@/components/DropdownMenu";
+import Link from "next/link";
 
 const HamburgerMenu = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
@@ -11,8 +12,18 @@ const HamburgerMenu = () => {
 
   const handleDropdownMenu = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setIsMenuOpen(!isMenuOpen);
-    setAnchorEl(e.currentTarget);
+
+    if (!isMenuOpen) {
+      setAnchorEl(e.currentTarget);
+    } else {
+      setAnchorEl(null);
+    }
   };
+
+  const handleCloseDropdownMenu = useCallback(() => {
+    setIsMenuOpen(false);
+    setAnchorEl(null);
+  }, []);
 
   return (
     <div
@@ -34,15 +45,38 @@ const HamburgerMenu = () => {
       <DropdownMenu
         anchorElement={anchorEl}
         open={isMenuOpen}
+        onClose={handleCloseDropdownMenu}
       >
-        <div>
-          <div>
-            menu item 1
+        <Link href="/dashboard">
+          <div
+            className={styles["list-item"]}
+          >
+            <span
+              className={`material-symbol--container material-symbols-outlined`.trim()}
+              aria-hidden={true}
+            >
+              account_circle
+            </span>
+            <span>Tili</span>
           </div>
-        </div>
-        <div>
-          menu item 2
-        </div>
+        </Link>
+        <Link href="/">
+          <div
+            className={styles["list-item"]}
+          >
+            <span
+              className={`material-symbol--container material-symbols-outlined`.trim()}
+              aria-hidden={true}
+            >
+              account_circle
+            </span>
+            <span>Koti</span>
+          </div>
+        </Link>
+        <div className={styles["list-item"]}>
+          asd
+          </div>
+          1
       </DropdownMenu>
     </div>
   );
