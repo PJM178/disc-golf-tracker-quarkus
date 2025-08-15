@@ -49,7 +49,18 @@ const DropdownMenu = (props: DropdownMenuProps) => {
       }
     } else if (e.key.toLowerCase() === "arrowup") {
       if (listRef.current) {
-        listRef.current.children[currentIndexRef.current].classList.remove(styles["active"]);
+        if (currentIndexRef.current === listRef.current.children.length - 1) {
+          currentIndexRef.current = 0;
+          listRef.current.children[listRef.current.children.length - 1].classList.remove(styles["active"]);
+        } else if (currentIndexRef.current === 0) {
+          currentIndexRef.current = listRef.current.children.length - 1;
+          listRef.current.children[0].classList.remove(styles["active"]);
+        } else {
+          currentIndexRef.current -= 1;
+          listRef.current.children[currentIndexRef.current - 1].classList.remove(styles["active"]);
+        }
+
+        listRef.current.children[currentIndexRef.current].classList.add(styles["active"]);
       }
     }
 
@@ -57,7 +68,7 @@ const DropdownMenu = (props: DropdownMenuProps) => {
       if (listRef.current && listRef.current.children[currentIndexRef.current - 1 < 0 ? 0 : currentIndexRef.current].children[0] instanceof HTMLElement) {
         (listRef.current.children[currentIndexRef.current - 1 < 0 ? 0 : currentIndexRef.current].children[0] as HTMLElement).click();
       }
-      console.log(currentIndexRef.current);
+
       handleClose();
     }
   }, [handleClose, currentIndexRef]);
@@ -74,7 +85,6 @@ const DropdownMenu = (props: DropdownMenuProps) => {
     if (!props.open) {
       document.body.removeEventListener("keydown", handleKeyDown);
       document.getElementById("root")?.removeAttribute("inert");
-      console.log("here");
     }
 
   }, [props.open, props.anchorElement, handleKeyDown]);
@@ -104,7 +114,7 @@ const DropdownMenu = (props: DropdownMenuProps) => {
                 key={index}
                 role="menuitem"
                 className={styles["list-item"]}
-                onClick={props.onClose}
+                onClick={handleClose}
               >
                 {child}
               </li>
@@ -113,7 +123,7 @@ const DropdownMenu = (props: DropdownMenuProps) => {
         </div>
         <div
           className={styles["backdrop--click"]}
-          onClick={props.onClose}
+          onClick={handleClose}
         />
       </div>,
       document.body
