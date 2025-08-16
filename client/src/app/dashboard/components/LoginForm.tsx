@@ -12,7 +12,9 @@ const LoginForm = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:8080/hello/test");
+      const res = await fetch("http://localhost:8080/users/admin", {
+        credentials: "include"
+      });
 
       if (res.ok) {
         const data: Record<string, string> = await res.json();
