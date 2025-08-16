@@ -1,9 +1,10 @@
 package dev.local.myproject.users.resource;
 
+import java.util.List;
 import java.util.Optional;
 
+import dev.local.myproject.users.dto.UserPublicDto;
 import dev.local.myproject.users.entity.User;
-import dev.local.myproject.users.model.UserDto;
 import dev.local.myproject.users.service.UserService;
 import io.quarkus.logging.Log;
 import jakarta.inject.Inject;
@@ -31,8 +32,16 @@ public class UserResource {
         Optional<User> user = userService.findByUsername(username);
 
         return user
-            .map(u -> new UserDto(u.username))
+            .map(u -> new UserPublicDto(u.username))
             .map(dto -> Response.ok(dto).build())
             .orElse(Response.status(Response.Status.NOT_FOUND).build());
+    }
+
+    @GET
+    @Path("/all")
+    public List<UserPublicDto> getAllUsers() {
+        List<UserPublicDto> users = userService.getAllUsers();
+
+        return users;
     }
 }

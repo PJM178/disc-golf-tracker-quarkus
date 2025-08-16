@@ -12,7 +12,7 @@ const LoginForm = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:8080/users/admin", {
+      const res = await fetch("http://localhost:8080/users/all", {
         credentials: "include"
       });
 
@@ -70,9 +70,16 @@ const LoginForm = () => {
           Data from the endpoint:
         </div>
         <div>
-          {data && Object.entries(data).map(([k, v], index) => (
+          {data && !data.length && Object.entries(data).map(([k, v], index) => (
             <div key={index}>{k}{v}</div>
           ))}
+          {data && data.length && (data as unknown as Record<string, string>[]).map((r, index) => {
+            const [k, v] = Object.entries(r);
+
+            return (
+              <div key={index}>{k}{v}</div>
+            );
+          })}
         </div>
       </div>
     </form>
