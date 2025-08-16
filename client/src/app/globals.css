@@ -106,6 +106,7 @@
     --stroke-strong: hsl(230, 8.5%, 61.7%);
     --stroke-weak: hsl(230, 8.1%, 23.1%);
     --stroke-weak--lighter: hsl(230, 8.1%, 40%);
+    --stroke-weak--lighter-less: hsl(230, 8.1%, 30%);
     --fill: hsl(230, 11.1%, 13.5%);
     --background: hsl(230, 17.6%, 8.5%);
     --error-text: hsla(0, 100%, 80.5%, 1);
