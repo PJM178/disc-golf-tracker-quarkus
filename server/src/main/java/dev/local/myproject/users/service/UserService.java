@@ -16,7 +16,7 @@ public class UserService {
     @Inject
     UserRepository userRepository;
 
-    public Optional<User> findByUsername(String username) {
+    public Optional<User> findByUsernameOptional(String username) {
         return userRepository.find("username", username).firstResultOptional();
     }
 

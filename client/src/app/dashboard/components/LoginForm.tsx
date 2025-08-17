@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import styles from "./LoginForm.module.css";
+import { useRouter } from "next/navigation";
 
 const LoginForm = () => {
+  const router = useRouter();
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [data, setData] = useState<Record<string, string> | null>(null);
@@ -12,8 +14,13 @@ const LoginForm = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:8080/users/all", {
-        credentials: "include"
+      const res = await fetch("http://localhost:8080/users/login", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ username: username, password: password }),
       });
 
       if (res.ok) {
@@ -21,6 +28,10 @@ const LoginForm = () => {
 
         setData(data);
         console.log(data);
+
+        setTimeout(() => {
+          router.replace("http://localhost:3000/dashboard");
+        }, 2000);
       }
     } catch (err) {
       console.error(err);
