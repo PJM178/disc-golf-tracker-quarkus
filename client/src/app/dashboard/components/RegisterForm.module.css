@@ -1,0 +1,12 @@
+.step-tracker--container {
+  display: flex;
+  justify-content: space-evenly;
+  gap: 0.5rem;
+}
+
+.step-tracker--step {
+  width: 100%;
+  height: 0.5rem;
+  background-color: grey;
+  border-radius: 9999px;
+}

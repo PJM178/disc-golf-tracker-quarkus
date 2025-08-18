@@ -279,3 +279,19 @@ header {
 }
 
 /* Google fonts & Icons - END */
+
+/* Global form stling - START */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+/* Global form stling - END */
