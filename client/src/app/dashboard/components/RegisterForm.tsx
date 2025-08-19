@@ -1,8 +1,11 @@
 "use client"
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./RegisterForm.module.css";
 import { useRouter } from "next/navigation";
+import TextField from "@/components/Inputs";
+import { Button } from "@/components/Buttons";
+import useDebounce from "@/app/hooks/useDebounce";
 
 
 interface CurrentStep {
@@ -16,12 +19,14 @@ interface StepTrackerProps {
 
 const StepTracker = ({ currentStep }: StepTrackerProps) => {
   return (
-    <div>
+    <div
+      className={styles["step-tracker--container"]}
+    >
       <div>
         <span>Vaihe </span><span>{currentStep.step} / {currentStep.maxStep}</span>
       </div>
       <div
-        className={styles["step-tracker--container"]}
+        className={styles["step-tracker--step-container"]}
       >
         {Array.from({ length: currentStep.maxStep }, (_, i) => i + 1).map((step, index) => (
           <div
@@ -39,10 +44,22 @@ const RegisterForm = () => {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState<CurrentStep>({ step: 1, maxStep: 3 });
   const [username, setUsername] = useState<string>("");
+  const { debouncedValue } = useDebounce(username, 5000);
   const [password, setPassword] = useState<string>("");
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
-  const [data, setData] = useState<Record<string, string> | null>(null);
+  const [usernameTakenError, setUsernameTakenError] = useState("");
+
+  // Check using debounced value if the username is taken
+  useEffect(() => {
+    if (Math.random() > 0.5) {
+      setUsernameTakenError("username already taken");
+
+    } else {
+      setUsernameTakenError("");
+
+    }
+  }, [debouncedValue]);
 
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
@@ -67,7 +84,6 @@ const RegisterForm = () => {
       if (res.ok) {
         const data: Record<string, string> = await res.json();
 
-        setData(data);
         console.log(data);
 
         // setTimeout(() => {
@@ -82,39 +98,45 @@ const RegisterForm = () => {
   const handleButtons = (currentStep: CurrentStep) => {
     if (currentStep.step === currentStep.maxStep) {
       return (
-        <div>
-          <button
+        <>
+          <Button
+            variant="secondary"
             type="button"
             onClick={() => setCurrentStep((prevValue) => ({ ...prevValue, step: prevValue.step - 1 }))}
           >
             <span>Edellinen</span>
-          </button>
-          <button
+          </Button>
+          <Button
+            className="form--buttons-forward"
+            variant="primary"
             type="button"
             onClick={handleSubmit}
           >
             <span>Rekisteröidy</span>
-          </button>
-        </div>
+          </Button>
+        </>
       );
     }
 
     return (
-      <div>
+      <>
         {currentStep.step !== 1 &&
-          <button
+          <Button
+            variant="secondary"
             type="button"
             onClick={() => setCurrentStep((prevValue) => ({ ...prevValue, step: prevValue.step - 1 }))}
           >
             <span>Edellinen</span>
-          </button>}
-        <button
+          </Button>}
+        <Button
+          className="form--buttons-forward"
+          variant="primary"
           type="button"
           onClick={() => setCurrentStep((prevValue) => ({ ...prevValue, step: prevValue.step + 1 }))}
         >
           <span>Seuraava</span>
-        </button>
-      </div>
+        </Button>
+      </>
     )
   }
 
@@ -122,17 +144,19 @@ const RegisterForm = () => {
     switch (currentStep) {
       case 1:
         return (
-          <div>
+          <>
             <h2><span>Käyttäjätiedot</span></h2>
             <div
               className="form-field"
             >
+              {usernameTakenError}
               <label
                 htmlFor="username"
               >
                 Käyttäjänimi
               </label>
-              <input
+              <TextField
+                variant="outlined"
                 name="username"
                 id="username"
                 value={username}
@@ -147,7 +171,8 @@ const RegisterForm = () => {
               >
                 Salasana
               </label>
-              <input
+              <TextField
+                variant="outlined"
                 name="password"
                 id="password"
                 type="password"
@@ -155,11 +180,11 @@ const RegisterForm = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-          </div>
+          </>
         );
       case 2:
         return (
-          <div>
+          <>
             <h2><span>Henkilötiedot</span></h2>
             <div
               className="form-field"
@@ -169,7 +194,8 @@ const RegisterForm = () => {
               >
                 Etunimi
               </label>
-              <input
+              <TextField
+                variant="outlined"
                 name="first-name"
                 id="first-name"
                 value={firstName}
@@ -184,18 +210,19 @@ const RegisterForm = () => {
               >
                 Sukunimi
               </label>
-              <input
+              <TextField
+                variant="outlined"
                 name="last-name"
                 id="last-name"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
               />
             </div>
-          </div>
+          </>
         );
       case 3:
         return (
-          <div>
+          <>
             <h2><span>Yhteenveto</span></h2>
             <h3><span>Käyttäjätiedot</span></h3>
             <div>
@@ -206,7 +233,7 @@ const RegisterForm = () => {
               <div>{firstName}</div>
               <div>{lastName}</div>
             </div>
-          </div>
+          </>
         );
       default:
         return null;
@@ -215,30 +242,22 @@ const RegisterForm = () => {
 
   return (
     <div>
-      <StepTracker
-        currentStep={currentStep}
-      />
+
       <form
         className="form"
       >
-        {handleCurrentStep(currentStep.step)}
-        {handleButtons(currentStep)}
-        <div>
-          <div>
-            Data from the endpoint:
-          </div>
-          <div>
-            {data && !data.length && Object.entries(data).map(([k, v], index) => (
-              <div key={index}>{k}{v}</div>
-            ))}
-            {data && data.length && (data as unknown as Record<string, string>[]).map((r, index) => {
-              const [k, v] = Object.entries(r);
-
-              return (
-                <div key={index}>{k}{v}</div>
-              );
-            })}
-          </div>
+        <StepTracker
+          currentStep={currentStep}
+        />
+        <div
+          className="form--content"
+        >
+          {handleCurrentStep(currentStep.step)}
+        </div>
+        <div
+          className="form--buttons"
+        >
+          {handleButtons(currentStep)}
         </div>
       </form>
     </div>

@@ -1,4 +1,4 @@
-.step-tracker--container {
+.step-tracker--step-container {
   display: flex;
   justify-content: space-evenly;
   gap: 0.5rem;
@@ -9,4 +9,10 @@
   height: 0.5rem;
   background-color: grey;
   border-radius: 9999px;
+}
+
+.step-tracker--container {
+  display: flex;
+  gap: 0.5rem;
+  flex-direction: column;
 }

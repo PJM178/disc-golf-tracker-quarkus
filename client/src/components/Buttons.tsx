@@ -35,7 +35,7 @@ export const Button = (props: ButtonProps) => {
 
   return (
     <button
-      className={`${styles["button--base"]} ${buttonStyles[variant]}`.trim()}
+      className={`${className} ${styles["button--base"]} ${buttonStyles[variant]}`.trim()}
       disabled={disabled}
       {...rest}
     >
