@@ -31,7 +31,7 @@ const StepTracker = ({ currentStep }: StepTrackerProps) => {
         {Array.from({ length: currentStep.maxStep }, (_, i) => i + 1).map((step, index) => (
           <div
             key={index}
-            className={styles["step-tracker--step"]}
+            className={`${styles["step-tracker--step"]} ${step <= currentStep.step ? "" : styles["step-tracker--step-shadow"]}`.trim()}
             style={step <= currentStep.step ? { backgroundColor: "purple" } : undefined}
           />
         ))}
@@ -44,7 +44,7 @@ const RegisterForm = () => {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState<CurrentStep>({ step: 1, maxStep: 3 });
   const [username, setUsername] = useState<string>("");
-  const { debouncedValue } = useDebounce(username, 5000);
+  const { debouncedValue } = useDebounce(username, 500);
   const [password, setPassword] = useState<string>("");
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
@@ -52,13 +52,23 @@ const RegisterForm = () => {
 
   // Check using debounced value if the username is taken
   useEffect(() => {
-    if (Math.random() > 0.5) {
-      setUsernameTakenError("username already taken");
+    async function fetchUser() {
+      try {
+        const res = await fetch(`http://localhost:8080/users/check/${debouncedValue}`);
 
-    } else {
-      setUsernameTakenError("");
+        const data: { available: boolean } = await res.json();
 
+        if (data.available) {
+          setUsernameTakenError("");
+        } else {
+          setUsernameTakenError("Username taken");
+        }
+      } catch (err) {
+        console.log("Something went wrong: ", err);
+      }
     }
+
+    fetchUser();
   }, [debouncedValue]);
 
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {

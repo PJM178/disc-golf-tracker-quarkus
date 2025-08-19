@@ -38,11 +38,22 @@ public class UserResource {
         Log.info("Fetching user with username: " + username);
 
         Optional<User> user = userService.findByUsernameOptional(username);
-
+        
         return user
                 .map(u -> new UserAdminDto(user.get()))
                 .map(dto -> Response.ok(dto).build())
                 .orElse(Response.status(Response.Status.NOT_FOUND).build());
+    }
+
+    @GET
+    @Path("/check/{username}")
+    public Response checkIfUsernameIsTaken(@PathParam("username") String username) {
+        Log.info("Checking username availability: " + username);
+
+        Optional<User> user = userService.findByUsernameOptional(username);
+        boolean available = user.isEmpty();
+
+        return Response.ok(Map.of("available", available)).build();
     }
 
     @GET

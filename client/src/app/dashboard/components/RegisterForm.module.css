@@ -11,6 +11,11 @@
   border-radius: 9999px;
 }
 
+.step-tracker--step-shadow {
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4),
+              inset 0 -2px 4px rgba(255, 255, 255, 0.3)
+}
+
 .step-tracker--container {
   display: flex;
   gap: 0.5rem;
