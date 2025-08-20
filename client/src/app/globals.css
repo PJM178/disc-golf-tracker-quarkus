@@ -179,6 +179,39 @@ a {
   text-decoration: none;
 }
 
+a:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+a:hover {
+  cursor: pointer;
+  color: var(--brand);
+}
+
+.a:active {
+  opacity: 1;
+}
+
+a:disabled {
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+
+a:active:not(:disabled) {
+  opacity: 0.8;
+  color: var(--brand);
+
+}
+
+a:focus-visible {
+  color: var(--brand);
+}
+
+a:disabled {
+  cursor: not-allowed;
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;

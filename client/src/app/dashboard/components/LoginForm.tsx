@@ -3,6 +3,8 @@
 import { useState } from "react";
 import styles from "./LoginForm.module.css";
 import { useRouter } from "next/navigation";
+import TextField from "@/components/Inputs";
+import { Button } from "@/components/Buttons";
 
 const LoginForm = () => {
   const router = useRouter();
@@ -51,7 +53,8 @@ const LoginForm = () => {
         >
           Käyttäjänimi
         </label>
-        <input
+        <TextField
+          variant="outlined"
           name="username"
           id="username"
           onChange={(e) => setUsername(e.target.value)}
@@ -65,17 +68,21 @@ const LoginForm = () => {
         >
           Salasana
         </label>
-        <input
+        <TextField
+          variant="outlined"
+          type="password"
           name="password"
           id="password"
           onChange={(e) => setPassword(e.target.value)}
         />
       </div>
-      <button
+      <Button
+        className="form--buttons-forward"
+        variant="primary"
         type="submit"
       >
-        Kirjaudu
-      </button>
+        <span>Kirjaudu</span>
+      </Button>
       <div>
         <div>
           Data from the endpoint:

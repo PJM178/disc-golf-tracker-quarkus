@@ -7,7 +7,9 @@ const Header = () => {
     <header className={styles["container"]}>
 
       <div className={styles["header--name"]}>
-        <Link href="/">
+        <Link
+          href="/"
+        >
           Frisbeegolf-päiväkirja
         </Link>
       </div>
