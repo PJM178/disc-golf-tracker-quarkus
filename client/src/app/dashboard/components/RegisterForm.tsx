@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./RegisterForm.module.css";
 import { useRouter } from "next/navigation";
 import TextField from "@/components/Inputs";
@@ -52,23 +52,27 @@ const RegisterForm = () => {
 
   // Check using debounced value if the username is taken
   useEffect(() => {
-    async function fetchUser() {
-      try {
-        const res = await fetch(`http://localhost:8080/users/check/${debouncedValue}`);
+    if (debouncedValue) {
+      async function fetchUser() {
+        try {
+          const res = await fetch(`http://localhost:8080/users/check/${debouncedValue}`);
 
-        const data: { available: boolean } = await res.json();
+          const data: { available: boolean } = await res.json();
 
-        if (data.available) {
-          setUsernameTakenError("");
-        } else {
-          setUsernameTakenError("Username taken");
+          if (data.available) {
+            setUsernameTakenError("");
+          } else {
+            setUsernameTakenError("Username taken");
+          }
+        } catch (err) {
+          console.log("Something went wrong: ", err);
         }
-      } catch (err) {
-        console.log("Something went wrong: ", err);
       }
-    }
 
-    fetchUser();
+      fetchUser();
+    } else {
+      setUsernameTakenError("");
+    }
   }, [debouncedValue]);
 
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {

@@ -22,6 +22,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.NewCookie;
 import jakarta.ws.rs.core.Response;
 
 @Path("/users")
@@ -38,7 +39,7 @@ public class UserResource {
         Log.info("Fetching user with username: " + username);
 
         Optional<User> user = userService.findByUsernameOptional(username);
-        
+
         return user
                 .map(u -> new UserAdminDto(user.get()))
                 .map(dto -> Response.ok(dto).build())
@@ -71,8 +72,17 @@ public class UserResource {
                 .map(userDto -> {
                     Log.infof("User with username %s successfully logged in", userCredentials.username);
 
-                    return Response.ok(userDto).build();
+                    NewCookie cookie = new NewCookie.Builder("token")
+                            .value(userDto.username)
+                            .path("/")
+                            .maxAge(3600)
+                            .httpOnly(true)
+                            .secure(false)
+                            .build();
 
+                    return Response.ok(userDto)
+                            .cookie(cookie)
+                            .build();
                 })
                 .orElseGet(() -> {
                     Log.infof("User with username %s failed to log in", userCredentials.username);
