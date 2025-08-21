@@ -87,6 +87,10 @@ const DropdownMenu = (props: DropdownMenuProps) => {
       document.getElementById("root")?.removeAttribute("inert");
     }
 
+    return () => {
+      document.body.removeEventListener("keydown", handleKeyDown);
+      document.getElementById("root")?.removeAttribute("inert");
+    };
   }, [props.open, props.anchorElement, handleKeyDown]);
 
   if (!props.open || !props.anchorElement) return;

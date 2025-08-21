@@ -47,7 +47,7 @@ const HamburgerMenu = () => {
         open={isMenuOpen}
         onClose={handleCloseDropdownMenu}
       >
-        <Link href="/dashboard">
+        {/* <Link href="/dashboard">
           <div
             className={styles["list-item"]}
           >
@@ -72,7 +72,7 @@ const HamburgerMenu = () => {
             </span>
             <span>Peli</span>
           </div>
-        </Link>
+        </Link> */}
       </DropdownMenu>
     </div>
   );

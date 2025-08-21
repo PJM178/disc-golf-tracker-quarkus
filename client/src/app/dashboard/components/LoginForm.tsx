@@ -5,12 +5,14 @@ import styles from "./LoginForm.module.css";
 import { useRouter } from "next/navigation";
 import TextField from "@/components/Inputs";
 import { Button } from "@/components/Buttons";
+import { useUser } from "@/context/UserContext";
 
 const LoginForm = () => {
   const router = useRouter();
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [data, setData] = useState<Record<string, string> | null>(null);
+  const { setUser} = useUser();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -29,7 +31,8 @@ const LoginForm = () => {
         const data: Record<string, string> = await res.json();
 
         setData(data);
-        console.log(data);
+        console.log("this is user data", data);
+        setUser({ id: "test", name: data.firstName || data.username })
 
         setTimeout(() => {
           router.replace("http://localhost:3000/dashboard");
@@ -39,7 +42,7 @@ const LoginForm = () => {
       console.error(err);
     }
   };
-  console.log("data", data)
+
   return (
     <form
       className={styles["form"]}

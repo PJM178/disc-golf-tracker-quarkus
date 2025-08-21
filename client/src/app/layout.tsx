@@ -37,17 +37,21 @@ export default async function RootLayout({
   let user = null;
 
   if (cookie) {
-    const res = await fetch("http://localhost:8080/users/me", {
-      headers: { Authorization: "Bearer " + cookie.value },
-      cache: "no-store",
-    });
-    if (res.ok) {
-      const data = await res.json();
-      user = { id: "", name: data.username }; // adjust if backend field is different
+    try {
+      const res = await fetch("http://localhost:8080/users/me", { headers: { Authorization: "Bearer " + cookie.value }, cache: "no-store" });
+      
+      if (res.ok) {
+        const data = await res.json();
+        user = { id: "", name: data.username };
+      } else {
+        user = null;
+      }
+    } catch (err) {
+      console.error("Failed to fetch user:", err);
+      user = null;
     }
   }
 
-  console.log("this is user:", user);
   return (
     <html lang="en">
       <head>

@@ -62,13 +62,16 @@ public class UserResource {
     @GET
     @Path("/me")
     public Response loginUserUsingCookie(@HeaderParam("Authorization") String token) {
-        Log.info("This is the cookie: " + token);
+        Log.info("This is the header: " + token);
 
         if (token == null) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
 
-        return Response.ok(new UserPublicDto(token)).build();
+        // This should be JWT or something similar that is decoded for the username and authenticated
+        String usernameFromToken = token.split(" ")[1];
+
+        return Response.ok(new UserPublicDto(usernameFromToken)).build();
     }
 
     @GET
