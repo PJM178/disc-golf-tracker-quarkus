@@ -88,7 +88,6 @@ const HamburgerMenu = () => {
             className={`${styles["list-item"]} ${styles["logout-button"]}`}
             onClick={handleLogoutUser}
           >
-
             <span
               className={`material-symbol--container material-symbols-outlined`.trim()}
               aria-hidden={true}
@@ -96,7 +95,6 @@ const HamburgerMenu = () => {
               logout
             </span>
             <span>Kirjaudu ulos</span>
-
           </Button>}
       </DropdownMenu>
     </div>

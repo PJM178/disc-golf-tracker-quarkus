@@ -50,14 +50,14 @@ const DropdownMenu = (props: DropdownMenuProps) => {
     } else if (e.key.toLowerCase() === "arrowup") {
       if (listRef.current) {
         if (currentIndexRef.current === listRef.current.children.length - 1) {
-          currentIndexRef.current = 0;
+          currentIndexRef.current -= 1;
           listRef.current.children[listRef.current.children.length - 1].classList.remove(styles["active"]);
         } else if (currentIndexRef.current === 0) {
           currentIndexRef.current = listRef.current.children.length - 1;
           listRef.current.children[0].classList.remove(styles["active"]);
         } else {
           currentIndexRef.current -= 1;
-          listRef.current.children[currentIndexRef.current - 1].classList.remove(styles["active"]);
+          listRef.current.children[currentIndexRef.current + 1].classList.remove(styles["active"]);
         }
 
         listRef.current.children[currentIndexRef.current].classList.add(styles["active"]);
