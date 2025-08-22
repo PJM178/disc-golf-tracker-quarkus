@@ -28,8 +28,19 @@ const HamburgerMenu = () => {
     setAnchorEl(null);
   }, []);
 
-  const handleLogoutUser = () => {
-    setUser(null);
+  const handleLogoutUser = async () => {
+    try {
+      const res = await fetch("http://localhost:8080/users/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      if (res.ok) {
+        setUser(null);
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (

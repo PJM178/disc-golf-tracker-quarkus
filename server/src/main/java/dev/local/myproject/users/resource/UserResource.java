@@ -59,6 +59,8 @@ public class UserResource {
         return Response.ok(Map.of("available", available)).build();
     }
 
+    // This is used in Next.js server component doing SSR so cookie cannot be send
+    // with credentials
     @GET
     @Path("/me")
     public Response loginUserUsingCookie(@HeaderParam("Authorization") String token) {
@@ -68,7 +70,9 @@ public class UserResource {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
 
-        // This should be JWT or something similar that is decoded for the username and authenticated
+        // This should be JWT or something similar that is decoded for the username, id,
+        // etc. and
+        // authenticated
         String usernameFromToken = token.split(" ")[1];
 
         return Response.ok(new UserPublicDto(usernameFromToken)).build();
@@ -108,6 +112,25 @@ public class UserResource {
                             .entity(Map.of("message", "Invalid username or password"))
                             .build();
                 });
+    }
+
+    // Add logout side effects here
+    @POST
+    @Path("/logout")
+    public Response logoutUser(@CookieParam("token") String token) {
+        Log.info("this is token: " + token);
+
+        NewCookie cookie = new NewCookie.Builder("token")
+                .value("")
+                .path("/")
+                .maxAge(0)
+                .httpOnly(true)
+                .secure(false)
+                .build();
+
+        return Response.ok()
+                .cookie(cookie)
+                .build();
     }
 
     @POST
