@@ -12,3 +12,8 @@
   gap: 0.3rem;
   padding: 0.3rem 0.6rem;
 }
+
+.logout-button {
+  margin-top: 0.25rem;
+  border-top: 1px solid #ccc;
+}

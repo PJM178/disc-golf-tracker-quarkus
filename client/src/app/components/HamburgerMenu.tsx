@@ -5,10 +5,13 @@ import styles from "./HamburgerMenu.module.css";
 import { useCallback, useState } from "react";
 import DropdownMenu from "@/components/DropdownMenu";
 import Link from "next/link";
+import { useUser } from "@/context/UserContext";
+import { capitalizeFirstLetter } from "@/utils/utilities";
 
 const HamburgerMenu = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const { user, setUser } = useUser();
 
   const handleDropdownMenu = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setIsMenuOpen(!isMenuOpen);
@@ -24,6 +27,10 @@ const HamburgerMenu = () => {
     setIsMenuOpen(false);
     setAnchorEl(null);
   }, []);
+
+  const handleLogoutUser = () => {
+    setUser(null);
+  };
 
   return (
     <div
@@ -47,7 +54,7 @@ const HamburgerMenu = () => {
         open={isMenuOpen}
         onClose={handleCloseDropdownMenu}
       >
-        {/* <Link href="/dashboard">
+        <Link href="/dashboard">
           <div
             className={styles["list-item"]}
           >
@@ -57,7 +64,9 @@ const HamburgerMenu = () => {
             >
               account_circle
             </span>
-            <span>Tili</span>
+            {user ?
+              <span>Hei, {capitalizeFirstLetter(user.name)}</span> :
+              <span>Tili</span>}
           </div>
         </Link>
         <Link href="/">
@@ -72,7 +81,23 @@ const HamburgerMenu = () => {
             </span>
             <span>Peli</span>
           </div>
-        </Link> */}
+        </Link>
+        {user &&
+          <Button
+            variant="wrapper"
+            className={`${styles["list-item"]} ${styles["logout-button"]}`}
+            onClick={handleLogoutUser}
+          >
+
+            <span
+              className={`material-symbol--container material-symbols-outlined`.trim()}
+              aria-hidden={true}
+            >
+              logout
+            </span>
+            <span>Kirjaudu ulos</span>
+
+          </Button>}
       </DropdownMenu>
     </div>
   );

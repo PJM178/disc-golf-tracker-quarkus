@@ -1,12 +1,12 @@
 "use client"
 
-import { createContext, useContext, useState, Dispatch, SetStateAction } from "react";
+import { createContext, useContext, useState } from "react";
 
 type User = { id: string; name: string; } | null;
 
 interface UserContextType {
   user: User;
-  setUser: Dispatch<SetStateAction<User>>;
+  setUser: React.Dispatch<React.SetStateAction<User>>;
 }
 
 const UserContext = createContext<UserContextType | null>(null);
