@@ -273,6 +273,15 @@ header {
   filter: brightness(0.6);
 }
 
+.loading-icon--button {
+  --rotation-offset: 0deg;
+  fill: var(--text-strong);
+  transform-origin: center;
+  animation: rotateIcon 650ms linear infinite;
+  height: 1.5rem;
+  position: absolute;
+}
+
 @keyframes rotateIcon {
   0% {
     transform: rotate(var(--rotation-offset));

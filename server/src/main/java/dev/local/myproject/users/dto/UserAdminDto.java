@@ -1,5 +1,7 @@
 package dev.local.myproject.users.dto;
 
+import java.util.UUID;
+
 import dev.local.myproject.users.entity.User;
 import dev.local.myproject.users.model.Role;
 

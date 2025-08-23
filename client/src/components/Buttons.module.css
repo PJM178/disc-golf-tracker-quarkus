@@ -6,6 +6,14 @@
   text-underline-offset: initial;
 }
 
+.button--is-loading>*:not(:first-child) {
+  opacity: 0;
+}
+
+.button--is-loading {
+  pointer-events: none;
+}
+
 .button--base {
   display: flex;
   align-items: center;

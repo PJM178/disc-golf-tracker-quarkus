@@ -5,6 +5,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   variant: ButtonVariants;
   disabled?: boolean;
+  isLoading?: boolean;
   endIcon?: React.ReactNode;
   startIcon?: React.ReactNode;
 }
@@ -12,7 +13,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 type ButtonVariants = "primary" | "secondary" | "tertiary" | "wrapper";
 
 export const Button = (props: ButtonProps) => {
-  const { children, variant, className, startIcon, endIcon, disabled, ...rest } = props;
+  const { children, variant, isLoading, className, startIcon, endIcon, disabled, ...rest } = props;
 
   const buttonStyles = {
     primary: styles["button--primary"],
@@ -24,10 +25,11 @@ export const Button = (props: ButtonProps) => {
   if (variant === "wrapper") {
     return (
       <button
-        className={`${className} ${buttonStyles[variant]}`.trim()}
+        className={`${className} ${buttonStyles[variant]} ${isLoading ? styles["button--is-loading"] : ""}`.trim()}
         disabled={disabled}
         {...rest}
       >
+        {isLoading && <ProgressActivity className="loading-icon--button" />}
         {children}
       </button>
     );
@@ -35,10 +37,11 @@ export const Button = (props: ButtonProps) => {
 
   return (
     <button
-      className={`${className} ${styles["button--base"]} ${buttonStyles[variant]}`.trim()}
+      className={`${className} ${styles["button--base"]} ${buttonStyles[variant]} ${isLoading ? styles["button--is-loading"] : ""}`.trim()}
       disabled={disabled}
       {...rest}
     >
+      {isLoading && <ProgressActivity className="loading-icon--button" />}
       {startIcon &&
         <span className={styles["button--icon"]}>{startIcon}</span>}
       {children}

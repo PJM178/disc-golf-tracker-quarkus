@@ -114,7 +114,7 @@ public class UserResource {
                 });
     }
 
-    // Add logout side effects here
+    // Add logout side effects here - for now simply clear the cookie
     @POST
     @Path("/logout")
     public Response logoutUser(@CookieParam("token") String token) {

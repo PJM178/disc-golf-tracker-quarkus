@@ -49,7 +49,8 @@ const RegisterForm = () => {
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [usernameTakenError, setUsernameTakenError] = useState("");
-
+  const [isLoading, setIsLoading] = useState(false);
+  
   // Check using debounced value if the username is taken
   useEffect(() => {
     if (debouncedValue) {
@@ -77,6 +78,7 @@ const RegisterForm = () => {
 
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
+    setIsLoading(true);
 
     try {
       const dataToSubmit = {
@@ -106,6 +108,8 @@ const RegisterForm = () => {
       }
     } catch (err) {
       console.error(err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -125,6 +129,7 @@ const RegisterForm = () => {
             variant="primary"
             type="button"
             onClick={handleSubmit}
+            isLoading={isLoading}
           >
             <span>Rekisteröidy</span>
           </Button>
