@@ -1,17 +1,28 @@
 package dev.local.myproject.scorecard.entity;
 
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
 
-import jakarta.persistence.Column;
+import dev.local.myproject.common.BaseEntity;
+import dev.local.myproject.gameparticipant.entity.GameParticipant;
+import dev.local.myproject.score.entity.Score;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 
 @Entity
-public class Scorecard {
+public class ScoreCard extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    public UUID id;
+    @OneToOne
+    public GameParticipant participant;
+
+    @OneToMany(mappedBy = "scoreCard", cascade = CascadeType.ALL)
+    public List<Score> scores = new ArrayList<>();
+
+    public ScoreCard() {}
+
+    public ScoreCard(GameParticipant participant) {
+        this.participant = participant;
+    }
 }

@@ -1,17 +1,27 @@
 package dev.local.myproject.score.entity;
 
-import java.util.UUID;
-
-import jakarta.persistence.Column;
+import dev.local.myproject.common.BaseEntity;
+import dev.local.myproject.hole.entity.Hole;
+import dev.local.myproject.scorecard.entity.ScoreCard;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
 @Entity
-public class Score {
+public class Score extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    public UUID id;
+    @ManyToOne
+    public ScoreCard scoreCard;
+
+    @ManyToOne
+    public Hole hole;
+
+    public int strokes;
+
+    public Score () {}
+
+    public Score(ScoreCard scoreCard, Hole hole, int strokes) {
+        this.scoreCard = scoreCard;
+        this.hole = hole;
+        this.strokes = strokes;
+    }
 }
