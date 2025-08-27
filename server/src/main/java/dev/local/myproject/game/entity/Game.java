@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import dev.local.myproject.common.BaseEntity;
 import dev.local.myproject.course.entity.Course;
 import dev.local.myproject.gameparticipant.entity.GameParticipant;
@@ -25,7 +27,11 @@ public class Game extends BaseEntity {
     @Column(nullable = false, unique = true)
     public UUID uuid = UUID.randomUUID();
 
+    public String name;
+
+    @CreationTimestamp
     public Instant startTime;
+
     public Instant endTime;
 
     @ManyToOne
@@ -36,9 +42,8 @@ public class Game extends BaseEntity {
 
     public Game() {}
 
-    public Game(Instant startTime, Instant endTime, Course course) {
-        this.startTime = startTime;
-        this.endTime = endTime;
+    public Game(Course course) {
         this.course = course;
     }
+
 }

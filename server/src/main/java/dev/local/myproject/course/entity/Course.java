@@ -25,7 +25,11 @@ public class Course extends BaseEntity {
     @Column(nullable = false, unique = true)
     public UUID uuid = UUID.randomUUID();
 
+    @Column(nullable = false, unique = true)
     public String name;
+
+    @Column(nullable = false)
+    public String locationName;
 
     @Column(length = 1000)
     public String description;

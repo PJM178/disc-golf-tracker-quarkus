@@ -2,6 +2,9 @@ package dev.local.myproject.bootstrap;
 
 import java.util.Optional;
 
+import dev.local.myproject.course.entity.Course;
+import dev.local.myproject.course.model.CourseType;
+import dev.local.myproject.course.repository.CourseRepository;
 import dev.local.myproject.users.entity.User;
 import dev.local.myproject.users.model.Role;
 import dev.local.myproject.users.repository.UserRepository;
@@ -19,16 +22,37 @@ public class DataSeeder {
     @Inject
     UserRepository userRepository;
 
-    @Transactional
-    void onStartUp(@Observes StartupEvent ev) {
-        Optional<User> existing = userRepository.find("username", "admin").firstResultOptional();
+    @Inject
+    CourseRepository courseRepository;
 
-        if (existing.isEmpty()) {
+    void onStartUp(@Observes StartupEvent ev) {
+        this.seedUsers();
+        this.seedCourses();
+    }
+
+    @Transactional
+    void seedUsers() {
+        Optional<User> existingUser = userRepository.find("username", "admin").firstResultOptional();
+
+        if (existingUser.isEmpty()) {
             User admin = new User();
             admin.username = "admin";
             admin.role = Role.ADMIN;
             admin.password = "password";
             userRepository.persist(admin);
+        }
+    }
+
+    @Transactional
+    void seedCourses() {
+        Optional<Course> existingCourse = courseRepository.find("name", "Kaihun frisbeegolfpuisto").firstResultOptional();
+
+        if (existingCourse.isEmpty()) {
+            Course course = new Course();
+            course.name = "Kaihun frisbeegolfpuisto";
+            course.locationName = "Mikkeli";
+            course.courseType = CourseType.OFFICIAL;
+            courseRepository.persist(course);
         }
     }
 }
