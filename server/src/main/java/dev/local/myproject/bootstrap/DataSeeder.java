@@ -48,11 +48,7 @@ public class DataSeeder {
         Optional<Course> existingCourse = courseRepository.find("name", "Kaihun frisbeegolfpuisto").firstResultOptional();
 
         if (existingCourse.isEmpty()) {
-            Course course = new Course();
-            course.name = "Kaihun frisbeegolfpuisto";
-            course.locationName = "Mikkeli";
-            course.courseType = CourseType.OFFICIAL;
-            courseRepository.persist(course);
+            this.courseRepository.createCourse("Kaihun frisbeegolfpuisto", 61.666544, 27.279732, CourseType.OFFICIAL, "Mikkeli");
         }
     }
 }

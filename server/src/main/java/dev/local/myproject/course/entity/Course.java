@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.locationtech.jts.geom.Point;
+
 import dev.local.myproject.common.BaseEntity;
 import dev.local.myproject.course.model.CourseType;
 import dev.local.myproject.hole.entity.Hole;
@@ -31,6 +33,9 @@ public class Course extends BaseEntity {
     @Column(nullable = false)
     public String locationName;
 
+    @Column(columnDefinition = "GEOGRAPHY(Point, 4326)")
+    public Point location;
+
     @Column(length = 1000)
     public String description;
 
@@ -44,7 +49,8 @@ public class Course extends BaseEntity {
     public Course() {
     }
 
-    public Course(String name) {
+    public Course(String name, Point location) {
         this.name = name;
+        this.location = location;
     }
 }
