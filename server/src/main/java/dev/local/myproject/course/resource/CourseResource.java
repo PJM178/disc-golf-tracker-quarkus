@@ -49,8 +49,9 @@ public class CourseResource {
         List<Course> coursesInDb = this.courseService.findCoursesByLocationName(location);
         Log.info("courses" + coursesInDb);
 
-        return Response.ok(coursesInDb.stream()
-                .map(c -> new CourseDto(c)))
+        return Response
+                .ok(coursesInDb.stream()
+                        .map(c -> new CourseDto(c)))
                 .build();
     }
 }

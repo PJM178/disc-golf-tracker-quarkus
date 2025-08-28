@@ -5,7 +5,7 @@ import { Button, Switch } from "./Buttons";
 import styles from "./NewGameForm.module.css"
 import TextField from "./Inputs";
 import useDebounce from "@/app/hooks/useDebounce";
-import DropdownMenu from "./DropdownMenu";
+import SearchDropdownMenu from "./SearchDropdownMenu";
 
 interface AddPlayerInputProps {
   index: number;
@@ -73,8 +73,9 @@ const AddPlayerInput = memo(function AddPlayerInput(props: AddPlayerInputProps) 
 const FindCourse = () => {
   const [locationName, setLocationName] = useState<string>("");
   const { debouncedValue } = useDebounce(locationName, 500);
-  const [data, setData] = useState<unknown[]>([]);
+  const [data, setData] = useState<Record<string, string | number>[]>([]);
   const inputRef = useRef(null);
+  const [isListVisible, setIsListVisible] = useState(false);
 
   useEffect(() => {
     if (debouncedValue) {
@@ -84,7 +85,7 @@ const FindCourse = () => {
             method: "GET",
           });
 
-          const data: unknown[] = await res.json();
+          const data: Record<string, string | number>[] = await res.json();
           console.log(data);
           setData(data);
         } catch (err) {
@@ -93,6 +94,8 @@ const FindCourse = () => {
       }
 
       fetchCourses();
+    } else {
+      setData([]);
     }
   }, [debouncedValue]);
 
@@ -100,26 +103,23 @@ const FindCourse = () => {
     setLocationName(e.target.value);
   };
   console.log(debouncedValue);
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement, Element>) => {
+    console.log(e.target);
+  }
+
   return (
     <>
-      <TextField
+      <SearchDropdownMenu
+        data={data}
         variant="outlined"
         placeholder="Etsi ratoja paikannimellä"
         value={locationName}
         onChange={handleSearchField}
         ref={inputRef}
+        onFocus={() => setIsListVisible(true)}
+        onBlur={handleBlur}
       />
-      <DropdownMenu
-        anchorElement={inputRef.current}
-        open={data.length > 0 ? true : false}
-        onClose={() => setData([])}
-      >
-
-        {data.map((item, i) => (
-          <li key={i}>{item.name}</li>
-        ))}
-
-      </DropdownMenu>
     </>
   );
 };

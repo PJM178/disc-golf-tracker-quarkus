@@ -1,6 +1,6 @@
 import styles from "./Inputs.module.css";
 
-interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   variant: "outlined";
   ref?: React.RefObject<HTMLInputElement | null>
 }
