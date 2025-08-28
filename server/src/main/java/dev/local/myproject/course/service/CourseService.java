@@ -1,7 +1,13 @@
 package dev.local.myproject.course.service;
 
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.PrecisionModel;
+
 import dev.local.myproject.course.dto.CourseCreateDto;
 import dev.local.myproject.course.entity.Course;
+import dev.local.myproject.course.model.CourseType;
 import dev.local.myproject.course.repository.CourseRepository;
 import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -20,5 +26,32 @@ public class CourseService {
         Log.info(course.createdAt);
 
         return new CourseCreateDto();
+    }
+
+    
+    // Factory to generate Points from coordinates
+    private static final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
+    
+    // Helper method to create a Point from coordinates
+    public static Point pointFromLocation(double lat, double lon) {
+        Point point = geometryFactory.createPoint(new Coordinate(lon, lat));
+
+        return point;
+    }
+
+    // Create a new course - general course for now, think about what to include from the front
+    // and create new method for admin creating courses
+    public Course createCourse(String name, double lat, double lon, CourseType courseType,
+            String locationName) {
+        Point location = pointFromLocation(lat, lon);
+        Course course = new Course();
+        course.location = location;
+        course.name = name;
+        course.courseType = courseType;
+        course.locationName = locationName;
+
+        courseRepository.persist(course);
+
+        return course;
     }
 }
