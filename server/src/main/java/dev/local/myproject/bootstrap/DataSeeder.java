@@ -5,6 +5,7 @@ import java.util.Optional;
 import dev.local.myproject.course.entity.Course;
 import dev.local.myproject.course.model.CourseType;
 import dev.local.myproject.course.repository.CourseRepository;
+import dev.local.myproject.course.service.CourseService;
 import dev.local.myproject.users.entity.User;
 import dev.local.myproject.users.model.Role;
 import dev.local.myproject.users.repository.UserRepository;
@@ -21,6 +22,9 @@ public class DataSeeder {
 
     @Inject
     UserRepository userRepository;
+
+    @Inject
+    CourseService courseService;
 
     @Inject
     CourseRepository courseRepository;
@@ -48,7 +52,7 @@ public class DataSeeder {
         Optional<Course> existingCourse = courseRepository.find("name", "Kaihun frisbeegolfpuisto").firstResultOptional();
 
         if (existingCourse.isEmpty()) {
-            this.courseRepository.createCourse("Kaihun frisbeegolfpuisto", 61.666544, 27.279732, CourseType.OFFICIAL, "Mikkeli");
+            this.courseService.createCourse("Kaihun frisbeegolfpuisto", 61.666544, 27.279732, CourseType.OFFICIAL, "Mikkeli");
         }
     }
 }

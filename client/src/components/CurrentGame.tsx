@@ -375,7 +375,6 @@ const NewGame = () => {
           </span>
         </div>
       </Button>
-
       <Dialog
         isOpen={isNewGameDialogOpen}
         closeModal={() => setIsNewGameDialogOpen(false)}

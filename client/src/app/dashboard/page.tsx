@@ -1,3 +1,4 @@
+import NewGameForm from "@/components/NewGameForm";
 import HelloUser from "./components/UserHome";
 
 const Dashboard = () => {
