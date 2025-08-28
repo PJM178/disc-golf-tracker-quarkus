@@ -53,6 +53,9 @@ public class DataSeeder {
 
         if (existingCourse.isEmpty()) {
             this.courseService.createCourse("Kaihun frisbeegolfpuisto", 61.666544, 27.279732, CourseType.OFFICIAL, "Mikkeli");
+            this.courseService.createCourse("Mikkelin frisbeegolfpuisto", 61.666544, 27.279732, CourseType.OFFICIAL, "Mikkeli");
+            this.courseService.createCourse("Rantakylän Frisbeegolfpuisto", 61.666544, 27.279732, CourseType.OFFICIAL, "Mikkeli");
+            this.courseService.createCourse("Xamk - Mikkelin kampuksen frisbeegolfpuisto", 61.666544, 27.279732, CourseType.OFFICIAL, "Mikkeli");
         }
     }
 }

@@ -1,9 +1,11 @@
 import { Game, useGameState, Hole } from "@/context/GameStateContext";
 import { generateRandomId } from "@/utils/utilities";
-import { useState, useEffect, memo } from "react";
+import { useState, useEffect, memo, useRef } from "react";
 import { Button, Switch } from "./Buttons";
 import styles from "./NewGameForm.module.css"
 import TextField from "./Inputs";
+import useDebounce from "@/app/hooks/useDebounce";
+import DropdownMenu from "./DropdownMenu";
 
 interface AddPlayerInputProps {
   index: number;
@@ -69,10 +71,56 @@ const AddPlayerInput = memo(function AddPlayerInput(props: AddPlayerInputProps) 
 });
 
 const FindCourse = () => {
+  const [locationName, setLocationName] = useState<string>("");
+  const { debouncedValue } = useDebounce(locationName, 500);
+  const [data, setData] = useState<unknown[]>([]);
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (debouncedValue) {
+      async function fetchCourses() {
+        try {
+          const res = await fetch(`http://localhost:8080/courses/search?location=${debouncedValue}&coordinates=${[60, 24]}`, {
+            method: "GET",
+          });
+
+          const data: unknown[] = await res.json();
+          console.log(data);
+          setData(data);
+        } catch (err) {
+          console.log("Something went wrong: ", err);
+        }
+      }
+
+      fetchCourses();
+    }
+  }, [debouncedValue]);
+
+  const handleSearchField = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLocationName(e.target.value);
+  };
+  console.log(debouncedValue);
   return (
-    <TextField 
-      variant="outlined"
-    />
+    <>
+      <TextField
+        variant="outlined"
+        placeholder="Etsi ratoja paikannimellä"
+        value={locationName}
+        onChange={handleSearchField}
+        ref={inputRef}
+      />
+      <DropdownMenu
+        anchorElement={inputRef.current}
+        open={data.length > 0 ? true : false}
+        onClose={() => setData([])}
+      >
+
+        {data.map((item, i) => (
+          <li key={i}>{item.name}</li>
+        ))}
+
+      </DropdownMenu>
+    </>
   );
 };
 

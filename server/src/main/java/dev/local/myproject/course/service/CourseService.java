@@ -1,5 +1,7 @@
 package dev.local.myproject.course.service;
 
+import java.util.List;
+
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
@@ -10,6 +12,7 @@ import dev.local.myproject.course.entity.Course;
 import dev.local.myproject.course.model.CourseType;
 import dev.local.myproject.course.repository.CourseRepository;
 import io.quarkus.logging.Log;
+import io.quarkus.panache.common.Parameters;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -53,5 +56,15 @@ public class CourseService {
         courseRepository.persist(course);
 
         return course;
+    }
+
+    public List<Course> findCoursesByLocationName(String locationName) {
+        Log.info("Searching for location: " + locationName);
+
+        List<Course> courses = courseRepository.list(
+            "LOWER(locationName) LIKE :location",
+            Parameters.with("location", "%" + locationName.toLowerCase() + "%"));
+
+        return courses;
     }
 }

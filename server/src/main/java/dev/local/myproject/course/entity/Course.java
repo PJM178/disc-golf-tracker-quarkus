@@ -53,4 +53,10 @@ public class Course extends BaseEntity {
         this.name = name;
         this.location = location;
     }
+
+    @Override
+    public String toString() {
+        return "Course [uuid=" + uuid + ", name=" + name + ", locationName=" + locationName + ", location=" + location
+                + ", description=" + description + ", courseType=" + courseType + ", holes=" + holes + "]";
+    }
 }
