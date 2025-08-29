@@ -31,7 +31,13 @@ public class Course extends BaseEntity {
     public String name;
 
     @Column(nullable = false)
-    public String locationName;
+    public String city;
+
+    @Column(nullable = false)
+    public String address;
+
+    @Column(nullable = false)
+    public String postalCode;
 
     @Column(columnDefinition = "GEOGRAPHY(Point, 4326)")
     public Point location;
@@ -56,7 +62,7 @@ public class Course extends BaseEntity {
 
     @Override
     public String toString() {
-        return "Course [uuid=" + uuid + ", name=" + name + ", locationName=" + locationName + ", location=" + location
+        return "Course [uuid=" + uuid + ", name=" + name + ", locationName=" + city + ", location=" + location
                 + ", description=" + description + ", courseType=" + courseType + ", holes=" + holes + "]";
     }
 }
