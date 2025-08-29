@@ -76,6 +76,7 @@ const FindCourse = () => {
   const [data, setData] = useState<Record<string, string | number>[]>([]);
   const inputRef = useRef(null);
   const [isListVisible, setIsListVisible] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   useEffect(() => {
     if (debouncedValue) {
@@ -85,9 +86,11 @@ const FindCourse = () => {
             method: "GET",
           });
 
-          const data: Record<string, string | number>[] = await res.json();
-          console.log(data);
-          setData(data);
+          if (res.ok) {
+            const data: Record<string, string | number>[] = await res.json();
+            console.log(data);
+            setData(data);
+          }
         } catch (err) {
           console.log("Something went wrong: ", err);
         }
@@ -102,25 +105,34 @@ const FindCourse = () => {
   const handleSearchField = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLocationName(e.target.value);
   };
-  console.log(debouncedValue);
 
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement, Element>) => {
-    console.log(e.target);
-  }
+  const handleFocus = () => {
+    setIsListVisible(true);
+  };
 
   return (
-    <>
-      <SearchDropdownMenu
-        data={data}
+    <div>
+      <TextField
+        className={styles["new-game-form--form--text-field"]}
         variant="outlined"
         placeholder="Etsi ratoja paikannimellä"
         value={locationName}
         onChange={handleSearchField}
         ref={inputRef}
-        onFocus={() => setIsListVisible(true)}
-        onBlur={handleBlur}
+        // onBlur={handleBlur}
+        onFocus={handleFocus}
       />
-    </>
+      <SearchDropdownMenu
+        anchorElement={inputRef.current}
+        setSelectedIndex={setSelectedIndex}
+        isOpen={isListVisible}
+        setIsOpen={setIsListVisible}
+      >
+        {data.map((r, i) => (
+          <span key={i}>{r.name} - {r.locationName}</span>
+        ))}
+      </SearchDropdownMenu>
+    </div>
   );
 };
 

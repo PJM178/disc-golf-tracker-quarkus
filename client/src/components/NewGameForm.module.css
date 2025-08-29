@@ -76,3 +76,7 @@
   display: flex;
   justify-content: space-between;
 }
+
+.new-game-form--form--text-field {
+  width: 100%;
+}

@@ -1,50 +1,63 @@
-import { useEffect, useRef, useState } from "react";
-import TextField, { TextFieldProps } from "./Inputs";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import styles from "./SearchDropdownMenu.module.css";
 
-interface SearchDropdownMenuProps extends TextFieldProps {
-  data: Record<string, string | number>[];
+interface SearchDropdownMenuProps {
+  children: React.ReactNode;
+  anchorElement: HTMLElement | null;
+  setSelectedIndex: React.Dispatch<React.SetStateAction<number | null>>;
+  isOpen: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const SearchDropdownMenu = (props: SearchDropdownMenuProps) => {
-  const { data, value, ...TextFieldProps } = props;
-  const textFieldRef = useRef<HTMLInputElement>(null);
+  const { children, anchorElement, setSelectedIndex, isOpen, setIsOpen } = props;
+  const containerRef = useRef<HTMLUListElement>(null);
   const [rect, setRect] = useState<{ top: number; left: number; height: number; width: number } | null>(null);
+  const childArray = useMemo(() => React.Children.toArray(children), [children]);
 
-  const testData = [
-    ...data,
-    ...data,
-    ...data,
-  ];
+  const handleSelectValue = (index: number) => {
+    setSelectedIndex(index);
+    setIsOpen(false);
+  };
 
   useEffect(() => {
-    if (textFieldRef.current) {
-      const { top, left, height, width } = textFieldRef.current.getBoundingClientRect();
+    if (anchorElement) {
+      const { top, left, height, width } = anchorElement.getBoundingClientRect();
       setRect({ top, left, height, width });
     }
-  }, []);
+  }, [anchorElement]);
+
+  const handleClickEvent = useCallback((e: PointerEvent) => {
+    if (e.target === anchorElement || e.target === containerRef.current) return;
+
+    setIsOpen(false);
+  }, [anchorElement, setIsOpen]);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.addEventListener("click", handleClickEvent);
+    } else {
+      document.removeEventListener("click", handleClickEvent);
+    }
+  }, [isOpen, handleClickEvent]);
 
   return (
     <div
       className={styles["container"]}
     >
-      <TextField
-        {...TextFieldProps}
-        className={styles["input"]}
-        ref={textFieldRef}
-        value={value}
-      />
-      {data.length > 0 && rect &&
+      {childArray.length > 0 && rect && isOpen &&
         <ul
+          ref={containerRef}
           className={styles["list--container"]}
           style={{ top: (rect.top + rect.height) + "px", width: rect.width + "px" }}
         >
-          {testData.map((r, i) => (
+          {childArray.map((child, i) => (
             <li
               key={i}
               className={styles["list--item"]}
+              onClick={() => handleSelectValue(i)}
             >
-              <span>{r.name}</span>
+              {child}
             </li>
           ))}
         </ul>}

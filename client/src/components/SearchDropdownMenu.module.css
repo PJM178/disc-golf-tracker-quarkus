@@ -1,10 +1,5 @@
 .container {
   display: flex;
-  width: 100%;
-}
-
-.input {
-  width: 100%;
 }
 
 .list--container {
@@ -16,6 +11,7 @@
   margin-top: 0.3rem;
   max-height: max(25%, 200px);
   overflow: auto;
+  scrollbar-width: thin;
 }
 
 .list--item {
