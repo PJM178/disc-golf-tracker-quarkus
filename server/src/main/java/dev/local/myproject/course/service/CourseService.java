@@ -45,13 +45,15 @@ public class CourseService {
     // Create a new course - general course for now, think about what to include from the front
     // and create new method for admin creating courses
     public Course createCourse(String name, double lat, double lon, CourseType courseType,
-            String city) {
+            String city, String address, String postalCode) {
         Point location = pointFromLocation(lat, lon);
         Course course = new Course();
         course.location = location;
         course.name = name;
         course.courseType = courseType;
         course.city = city;
+        course.address = address;
+        course.postalCode = postalCode;
 
         courseRepository.persist(course);
 

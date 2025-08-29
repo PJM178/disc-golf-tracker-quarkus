@@ -52,10 +52,10 @@ public class DataSeeder {
         Optional<Course> existingCourse = courseRepository.find("name", "Kaihun frisbeegolfpuisto").firstResultOptional();
 
         if (existingCourse.isEmpty()) {
-            this.courseService.createCourse("Kaihun frisbeegolfpuisto", 61.666544, 27.279732, CourseType.OFFICIAL, "Mikkeli");
-            this.courseService.createCourse("Mikkelin frisbeegolfpuisto", 61.666544, 27.279732, CourseType.OFFICIAL, "Mikkeli");
-            this.courseService.createCourse("Rantakylän Frisbeegolfpuisto", 61.666544, 27.279732, CourseType.OFFICIAL, "Mikkeli");
-            this.courseService.createCourse("Xamk - Mikkelin kampuksen frisbeegolfpuisto", 61.666544, 27.279732, CourseType.OFFICIAL, "Mikkeli");
+            this.courseService.createCourse("Kaihun frisbeegolfpuisto", 61.666544, 27.279732, CourseType.OFFICIAL, "Mikkeli", "Saimaankatu 2", "50100");
+            this.courseService.createCourse("Mikkelin frisbeegolfpuisto", 61.666544, 27.279732, CourseType.OFFICIAL, "Mikkeli", "Saimaankatu 2", "50100");
+            this.courseService.createCourse("Rantakylän Frisbeegolfpuisto", 61.666544, 27.279732, CourseType.OFFICIAL, "Mikkeli", "Saimaankatu 2", "50100");
+            this.courseService.createCourse("Xamk - Mikkelin kampuksen frisbeegolfpuisto", 61.666544, 27.279732, CourseType.OFFICIAL, "Mikkeli", "Saimaankatu 2", "50100");
         }
     }
 }
