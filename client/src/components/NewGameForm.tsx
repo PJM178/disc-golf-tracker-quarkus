@@ -115,7 +115,7 @@ const FindCourse = () => {
       <TextField
         className={styles["new-game-form--form--text-field"]}
         variant="outlined"
-        placeholder="Etsi ratoja paikannimellä"
+        placeholder="Etsi ratoja osoitteella"
         value={locationName}
         onChange={handleSearchField}
         ref={inputRef}
