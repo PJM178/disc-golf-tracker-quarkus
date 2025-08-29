@@ -39,6 +39,8 @@ const SearchDropdownMenu = (props: SearchDropdownMenuProps) => {
     } else {
       document.removeEventListener("click", handleClickEvent);
     }
+
+    return () =>  document.removeEventListener("click", handleClickEvent);
   }, [isOpen, handleClickEvent]);
 
   return (
