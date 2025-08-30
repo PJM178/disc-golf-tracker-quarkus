@@ -129,7 +129,7 @@ const FindCourse = () => {
         setIsOpen={setIsListVisible}
       >
         {data.map((r, i) => (
-          <span key={i}>{r.name} - {r.locationName}</span>
+          <span key={i}>{r.name} - {r.city}</span>
         ))}
       </SearchDropdownMenu>
     </div>

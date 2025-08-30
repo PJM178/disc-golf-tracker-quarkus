@@ -64,7 +64,7 @@ public class CourseService {
         Log.info("Searching for location: " + locationName);
 
         List<Course> courses = courseRepository.list(
-            "LOWER(locationName) LIKE :location",
+            "LOWER(city) LIKE :location",
             Parameters.with("location", "%" + locationName.toLowerCase() + "%"));
 
         return courses;
