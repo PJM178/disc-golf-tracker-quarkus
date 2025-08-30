@@ -82,7 +82,7 @@ const FindCourse = () => {
     if (debouncedValue) {
       async function fetchCourses() {
         try {
-          const res = await fetch(`http://localhost:8080/courses/search?location=${debouncedValue}&coordinates=${[60, 24]}`, {
+          const res = await fetch(`http://localhost:8080/courses/search-full-text?location=${debouncedValue}&coordinates=${[60, 24]}`, {
             method: "GET",
           });
 
@@ -115,7 +115,7 @@ const FindCourse = () => {
       <TextField
         className={styles["new-game-form--form--text-field"]}
         variant="outlined"
-        placeholder="Etsi ratoja osoitteella"
+        placeholder="Etsi ratoja osoitteen perusteella"
         value={locationName}
         onChange={handleSearchField}
         ref={inputRef}

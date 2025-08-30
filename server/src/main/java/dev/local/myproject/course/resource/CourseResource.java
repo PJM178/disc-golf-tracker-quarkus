@@ -23,35 +23,56 @@ import jakarta.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 public class CourseResource {
 
-    @Inject
-    CourseService courseService;
+        @Inject
+        CourseService courseService;
 
-    @POST
-    @Path("/new")
-    public Response createNewCourse(CourseCreateDto course) {
-        CourseCreateDto dto = this.courseService.createNewCourse(course);
-        Log.info(dto);
+        @POST
+        @Path("/new")
+        public Response createNewCourse(CourseCreateDto course) {
+                CourseCreateDto dto = this.courseService.createNewCourse(course);
+                Log.info(dto);
 
-        return Response.ok().build();
-    }
+                return Response.ok().build();
+        }
 
-    @GET
-    @Path("/search")
-    public Response searchCoursesByLocation(@QueryParam("location") String location,
-            @QueryParam("coordinates") String coordinates) {
-        int[] coords = Arrays.stream(coordinates.split(","))
-                .mapToInt(Integer::parseInt)
-                .toArray();
+        @GET
+        @Path("/search")
+        public Response searchCoursesByLocation(@QueryParam("location") String location,
+                        @QueryParam("coordinates") String coordinates) {
+                int[] coords = Arrays.stream(coordinates.split(","))
+                                .mapToInt(Integer::parseInt)
+                                .toArray();
 
-        Log.infof("This is the searched location: %s", location);
-        Log.infof("This is the searched coordinates: %s", Arrays.toString(coords));
+                Log.infof("This is the searched location: %s", location);
+                Log.infof("This is the searched coordinates: %s", Arrays.toString(coords));
 
-        List<Course> coursesInDb = this.courseService.findCoursesByLocationName(location);
-        Log.info("courses" + coursesInDb);
+                List<Course> coursesInDb = this.courseService.findCoursesByLocationName(location);
+                Log.info("courses" + coursesInDb);
 
-        return Response
-                .ok(coursesInDb.stream()
-                        .map(c -> new CourseDto(c)))
-                .build();
-    }
+                return Response
+                                .ok(coursesInDb.stream()
+                                                .map(c -> new CourseDto(c)))
+                                .build();
+        }
+
+        @GET
+        @Path("/search-full-text")
+        public Response searchCoursesByLocationFullText(@QueryParam("location") String location,
+                        @QueryParam("coordinates") String coordinates) {
+                int[] coords = Arrays.stream(coordinates.split(","))
+                                .mapToInt(Integer::parseInt)
+                                .toArray();
+
+                Log.infof("This is the searched location: %s", location);
+                Log.infof("This is the searched coordinates: %s", Arrays.toString(coords));
+
+                List<Course> coursesInDb = this.courseService.findCoursesByAddressFullTextSearch(location);
+                Log.info("courses" + coursesInDb);
+
+                return Response
+                                .ok(coursesInDb
+                                                .stream()
+                                                .map(c -> new CourseDto(c)))
+                                .build();
+        }
 }

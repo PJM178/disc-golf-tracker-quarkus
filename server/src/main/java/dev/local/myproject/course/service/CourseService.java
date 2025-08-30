@@ -69,4 +69,14 @@ public class CourseService {
 
         return courses;
     }
+
+    public List<Course> findCoursesByAddressFullTextSearch(String searchTerm) {
+        // Require searchTerm to be more than 2 characters long since results using
+        // full text search can be huge if, e.g., only street numbers are provided and it matches
+        if (searchTerm == null || searchTerm.length() < 3) {
+            return List.of();
+        }
+
+        return courseRepository.fullTextCourseAddressSearch(searchTerm);
+    }
 }
