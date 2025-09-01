@@ -15,6 +15,10 @@ ALTER TABLE course
       setweight(to_tsvector('simple', coalesce(postal_code, '')), 'C')
     ) STORED;
 
-CREATE INDEX idx_course_search
-  ON course
-  USING gin (search_vector);
+-- Full text search index
+CREATE INDEX idx_course_search ON course USING gin (search_vector);
+
+-- Triagram similarity indices
+CREATE INDEX idx_course_address_trgm ON course USING gin (address gin_trgm_ops);
+CREATE INDEX idx_course_city_trgm    ON course USING gin (city gin_trgm_ops);
+CREATE INDEX idx_course_postal_trgm  ON course USING gin (postal_code gin_trgm_ops);
