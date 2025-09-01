@@ -28,7 +28,9 @@ const SearchDropdownMenu = (props: SearchDropdownMenuProps) => {
   }, [anchorElement]);
 
   const handleClickEvent = useCallback((e: PointerEvent) => {
-    if (e.target === anchorElement || e.target === containerRef.current) return;
+    if (e.target === anchorElement || e.target === containerRef.current ||
+      document.activeElement === anchorElement
+    ) return;
 
     setIsOpen(false);
   }, [anchorElement, setIsOpen]);
@@ -40,7 +42,7 @@ const SearchDropdownMenu = (props: SearchDropdownMenuProps) => {
       document.removeEventListener("click", handleClickEvent);
     }
 
-    return () =>  document.removeEventListener("click", handleClickEvent);
+    return () => document.removeEventListener("click", handleClickEvent);
   }, [isOpen, handleClickEvent]);
 
   return (
