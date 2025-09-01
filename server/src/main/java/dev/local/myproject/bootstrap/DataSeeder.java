@@ -47,7 +47,6 @@ public class DataSeeder {
         }
     }
 
-    @Transactional
     void seedCourses() {
         Optional<Course> existingCourse = courseRepository.find("name", "Kaihun frisbeegolfpuisto").firstResultOptional();
 

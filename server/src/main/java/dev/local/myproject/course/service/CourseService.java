@@ -44,6 +44,7 @@ public class CourseService {
 
     // Create a new course - general course for now, think about what to include from the front
     // and create new method for admin creating courses
+    @Transactional
     public Course createCourse(String name, double lat, double lon, CourseType courseType,
             String city, String address, String postalCode) {
         Point location = pointFromLocation(lat, lon);
