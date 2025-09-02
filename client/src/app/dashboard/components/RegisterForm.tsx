@@ -5,7 +5,7 @@ import styles from "./RegisterForm.module.css";
 import { useRouter } from "next/navigation";
 import TextField from "@/components/Inputs";
 import { Button } from "@/components/Buttons";
-import useDebounce from "@/app/hooks/useDebounce";
+import useDebounce from "@/hooks/useDebounce";
 
 
 interface CurrentStep {

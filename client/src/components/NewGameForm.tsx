@@ -4,8 +4,9 @@ import { useState, useEffect, memo, useRef } from "react";
 import { Button, Switch } from "./Buttons";
 import styles from "./NewGameForm.module.css"
 import TextField from "./Inputs";
-import useDebounce from "@/app/hooks/useDebounce";
+import useDebounce from "@/hooks/useDebounce";
 import SearchDropdownMenu from "./SearchDropdownMenu";
+import UseLocation from "./UseLocation";
 
 interface AddPlayerInputProps {
   index: number;
@@ -119,7 +120,6 @@ const FindCourse = () => {
         value={locationName}
         onChange={handleSearchField}
         ref={inputRef}
-        // onBlur={handleBlur}
         onFocus={handleFocus}
       />
       <SearchDropdownMenu
@@ -132,6 +132,7 @@ const FindCourse = () => {
           <span key={i}>{r.name} - {r.city}</span>
         ))}
       </SearchDropdownMenu>
+      <UseLocation />
     </div>
   );
 };

@@ -282,6 +282,14 @@ header {
   position: absolute;
 }
 
+.important-text {
+  font-weight: bold;
+}
+
+.subtext {
+  font-size: smaller;
+}
+
 @keyframes rotateIcon {
   0% {
     transform: rotate(var(--rotation-offset));

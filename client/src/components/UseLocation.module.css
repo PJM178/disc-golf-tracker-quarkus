@@ -1,0 +1,22 @@
+.button {
+  display: flex;
+  width: 100%;
+  padding: 0.5rem 0.5rem;
+  
+  flex-direction: column;
+}
+
+.button--main-content {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.button--main-content--location {
+  display: flex;
+  flex-direction: column;
+}
+
+.button--main-content--loading > * {
+  height: 1.5rem;
+}
