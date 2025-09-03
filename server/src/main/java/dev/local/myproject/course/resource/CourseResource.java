@@ -1,5 +1,6 @@
 package dev.local.myproject.course.resource;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -59,15 +60,27 @@ public class CourseResource {
         @Path("/search-full-text")
         public Response searchCoursesByLocationFullText(@QueryParam("location") String location,
                         @QueryParam("coordinates") String coordinates) {
-                int[] coords = Arrays.stream(coordinates.split(","))
-                                .mapToInt(Integer::parseInt)
-                                .toArray();
+                double[] coords = new double[0]; // default empty array
+                List<Course> coursesInDb = new ArrayList<Course>();
+
+                if (coordinates != null && !coordinates.isBlank()) {
+                        coords = Arrays.stream(coordinates.split(","))
+                                        .map(String::trim)
+                                        .filter(s -> !s.isEmpty())
+                                        .mapToDouble(Double::parseDouble)
+                                        .toArray();
+                }
 
                 Log.infof("This is the searched location: %s", location);
                 Log.infof("This is the searched coordinates: %s", Arrays.toString(coords));
 
-                List<Course> coursesInDb = this.courseService.findCoursesByAddressFullTextSearch(location);
-                Log.info("courses" + coursesInDb);
+                if (coords.length > 1) {
+                        coursesInDb = courseService.findCoursesByCoordinates(coords);
+                } else {
+                        coursesInDb = courseService.findCoursesByAddress(location);
+                }
+
+                Log.info("Courses found in DB: " + coursesInDb);
 
                 return Response
                                 .ok(coursesInDb

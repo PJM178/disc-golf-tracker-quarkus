@@ -7,6 +7,7 @@ import TextField from "./Inputs";
 import useDebounce from "@/hooks/useDebounce";
 import SearchDropdownMenu from "./SearchDropdownMenu";
 import UseLocation from "./UseLocation";
+import { Coordinates } from "@/hooks/useGeolocation";
 
 interface AddPlayerInputProps {
   index: number;
@@ -75,21 +76,31 @@ const FindCourse = () => {
   const [locationName, setLocationName] = useState<string>("");
   const { debouncedValue } = useDebounce(locationName, 500);
   const [data, setData] = useState<Record<string, string | number>[]>([]);
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const [isListVisible, setIsListVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [location, setLocation] = useState<Coordinates | null>(null);
 
   useEffect(() => {
-    if (debouncedValue) {
+    if (debouncedValue || location) {
       async function fetchCourses() {
         try {
-          const res = await fetch(`http://localhost:8080/courses/search-full-text?location=${debouncedValue}&coordinates=${[60, 24]}`, {
+          console.log(location);
+          const res = await fetch(`http://localhost:8080/courses/search-full-text?location=${debouncedValue}&coordinates=${location ? [location.lat, location.lon] : [""]}`, {
             method: "GET",
           });
 
           if (res.ok) {
             const data: Record<string, string | number>[] = await res.json();
-            console.log(data);
+
+            if (location) {
+              setLocationName("");
+
+              if (inputRef.current) {
+                inputRef.current.focus();
+              }
+            }
+
             setData(data);
           }
         } catch (err) {
@@ -101,7 +112,7 @@ const FindCourse = () => {
     } else {
       setData([]);
     }
-  }, [debouncedValue]);
+  }, [debouncedValue, location]);
 
   const handleSearchField = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLocationName(e.target.value);
@@ -111,15 +122,23 @@ const FindCourse = () => {
     setIsListVisible(true);
   };
 
+  const handleKeyDown = () => {
+    if (location) {
+      setLocation(null);
+    }
+  };
+
+  console.log(location);
   return (
     <div>
       <TextField
         className={styles["new-game-form--form--text-field"]}
         variant="outlined"
-        placeholder="Etsi ratoja osoitteen perusteella"
-        value={locationName}
+        placeholder={location ? "Haetaan lähellä olevia ratoja" : "Etsi ratoja osoitteen perusteella"}
+        value={location ? "" : locationName}
         onChange={handleSearchField}
         ref={inputRef}
+        onKeyDown={handleKeyDown}
         onFocus={handleFocus}
       />
       <SearchDropdownMenu
@@ -132,7 +151,9 @@ const FindCourse = () => {
           <span key={i}>{r.name} - {r.city}</span>
         ))}
       </SearchDropdownMenu>
-      <UseLocation />
+      <UseLocation
+        setLocation={setLocation}
+      />
     </div>
   );
 };

@@ -2,18 +2,31 @@
 // using a service provider such as OpenStreetMap
 
 import { Button } from "./Buttons";
-import useGeolocation from "@/hooks/useGeolocation";
+import useGeolocation, { Coordinates } from "@/hooks/useGeolocation";
 import styles from "./UseLocation.module.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ProgressActivity } from "./Loading";
 
-const UseLocation = () => {
+interface UseLocationProps {
+  setLocation: (args: Coordinates) => void;
+}
+
+const UseLocation = (props: UseLocationProps) => {
   const [promptLocation, setPromptLocation] = useState(false);
   const { location, error, loading } = useGeolocation({ prompt: promptLocation });
+  const { setLocation } = props;
 
   const handleClick = () => {
     setPromptLocation(true);
   };
+
+  useEffect(() => {
+    if (location) {
+      setLocation(location);
+      setPromptLocation(false);
+    }
+  }, [location, setLocation]);
+
   console.log(error);
   return (
     <Button

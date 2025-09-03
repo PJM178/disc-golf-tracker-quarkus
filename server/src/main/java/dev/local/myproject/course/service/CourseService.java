@@ -1,5 +1,6 @@
 package dev.local.myproject.course.service;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.locationtech.jts.geom.Coordinate;
@@ -31,10 +32,9 @@ public class CourseService {
         return new CourseCreateDto();
     }
 
-    
     // Factory to generate Points from coordinates
     private static final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
-    
+
     // Helper method to create a Point from coordinates
     public static Point pointFromLocation(double lat, double lon) {
         Point point = geometryFactory.createPoint(new Coordinate(lon, lat));
@@ -42,7 +42,8 @@ public class CourseService {
         return point;
     }
 
-    // Create a new course - general course for now, think about what to include from the front
+    // Create a new course - general course for now, think about what to include
+    // from the front
     // and create new method for admin creating courses
     @Transactional
     public Course createCourse(String name, double lat, double lon, CourseType courseType,
@@ -65,19 +66,32 @@ public class CourseService {
         Log.info("Searching for location: " + locationName);
 
         List<Course> courses = courseRepository.list(
-            "LOWER(city) LIKE :location",
-            Parameters.with("location", "%" + locationName.toLowerCase() + "%"));
+                "LOWER(city) LIKE :location",
+                Parameters.with("location", "%" + locationName.toLowerCase() + "%"));
 
         return courses;
     }
 
-    public List<Course> findCoursesByAddressFullTextSearch(String searchTerm) {
+    public List<Course> findCoursesByAddress(String searchTerm) {
         // Require searchTerm to be more than 2 characters long since results using
-        // full text search can be huge if, e.g., only street numbers are provided and it matches
+        // full text search can be huge if, e.g., only street numbers are provided and it matches        
         if (searchTerm == null || searchTerm.length() < 3) {
             return List.of();
         }
 
-        return courseRepository.fullTextCourseAddressSearch(searchTerm);
+        return courseRepository.fullTextAndSimilarityCourseAddressSearch(searchTerm);
+    }
+
+    public List<Course> findCoursesByCoordinates(double[] coordinates) {
+        // Require searchTerm to be more than 2 characters long since results using
+        // full text search can be huge if, e.g., only street numbers are provided and it matches        
+        if (coordinates.length < 2) {
+            return List.of();
+        }
+
+        Log.info("Coordinates in the location search: " + Arrays.toString(coordinates));
+
+
+        return courseRepository.searchNearby(coordinates);
     }
 }
