@@ -48,13 +48,23 @@ public class DataSeeder {
     }
 
     void seedCourses() {
-        Optional<Course> existingCourse = courseRepository.find("name", "Kaihun frisbeegolfpuisto").firstResultOptional();
+        Optional<Course> existingCourse = courseRepository.find("name", "Kaihun frisbeegolfpuisto")
+                .firstResultOptional();
 
         if (existingCourse.isEmpty()) {
-            this.courseService.createCourse("Kaihun frisbeegolfpuisto", 61.666544, 27.279732, CourseType.OFFICIAL, "Mikkeli", "Saimaankatu 2", "50100");
-            this.courseService.createCourse("Mikkelin frisbeegolfpuisto", 61.666544, 27.279732, CourseType.OFFICIAL, "Mikkeli", "Kalevankankaantie 3-5", "50120");
-            this.courseService.createCourse("Rantakylän Frisbeegolfpuisto", 61.666544, 27.279732, CourseType.OFFICIAL, "Mikkeli", "Kunnanmäki 3", "50600");
-            this.courseService.createCourse("Xamk - Mikkelin kampuksen frisbeegolfpuisto", 60.1698348, 24.9383805, CourseType.OFFICIAL, "Mikkeli", "Tarkk'ampujankuja", "50100");
+            this.courseService.createCourse("Kaihun frisbeegolfpuisto", 61.666544, 27.279732, CourseType.OFFICIAL,
+                    "Mikkeli", "Saimaankatu 2", "50100");
+            this.courseService.createCourse("Mikkelin frisbeegolfpuisto", 61.666544, 27.279732, CourseType.OFFICIAL,
+                    "Mikkeli", "Kalevankankaantie 3-5", "50120");
+            this.courseService.createCourse("Rantakylän Frisbeegolfpuisto", 61.666544, 27.279732, CourseType.OFFICIAL,
+                    "Mikkeli", "Kunnanmäki 3", "50600");
+            this.courseService.createCourse("Xamk - Mikkelin kampuksen frisbeegolfpuisto", 60.1698348, 24.9383805,
+                    CourseType.OFFICIAL, "Mikkeli", "Tarkk'ampujankuja", "50100");
+
+            for (int i = 0; i < 10; i++) {
+                this.courseService.createCourse("Xamk - Mikkelin kampuksen frisbeegolfpuisto" + i, 60.1698348, 24.9383805,
+                        CourseType.OFFICIAL, "Mikkeli", "Tarkk'ampujankuja", "50100");
+            }
         }
     }
 }

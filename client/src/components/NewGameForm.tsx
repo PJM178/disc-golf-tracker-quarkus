@@ -8,6 +8,7 @@ import useDebounce from "@/hooks/useDebounce";
 import SearchDropdownMenu from "./SearchDropdownMenu";
 import UseLocation from "./UseLocation";
 import { Coordinates } from "@/hooks/useGeolocation";
+import { CourseLocationSearch } from "@/types/course";
 
 interface AddPlayerInputProps {
   index: number;
@@ -75,23 +76,26 @@ const AddPlayerInput = memo(function AddPlayerInput(props: AddPlayerInputProps) 
 const FindCourse = () => {
   const [locationName, setLocationName] = useState<string>("");
   const { debouncedValue } = useDebounce(locationName, 500);
-  const [data, setData] = useState<Record<string, string | number>[]>([]);
+  const [data, setData] = useState<CourseLocationSearch[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const [isListVisible, setIsListVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [location, setLocation] = useState<Coordinates | null>(null);
 
+  // TODO: this is important
+  // when changing from text search to location search, if there is text in the input field
+  // the search gets triggered twice - fix this
   useEffect(() => {
     if (debouncedValue || location) {
       async function fetchCourses() {
         try {
           console.log(location);
-          const res = await fetch(`http://localhost:8080/courses/search-full-text?location=${debouncedValue}&coordinates=${location ? [location.lat, location.lon] : [""]}`, {
+          const res = await fetch(`http://localhost:8080/courses/search-full-text?location=${debouncedValue}${location ? "&lat=" + location.lat + "&lon=" + location.lon : ""}`, {
             method: "GET",
           });
 
           if (res.ok) {
-            const data: Record<string, string | number>[] = await res.json();
+            const data = await res.json();
 
             if (location) {
               setLocationName("");
@@ -148,7 +152,17 @@ const FindCourse = () => {
         setIsOpen={setIsListVisible}
       >
         {data.map((r, i) => (
-          <span key={i}>{r.name} - {r.city}</span>
+          <div
+            key={i}
+            className={styles["new-game-form--form--search-result--container"]}
+          >
+            <span>{r.name}</span>
+            <span
+              className="subtext"
+            >
+              {r.address}, {r.postalCode} {r.city}
+            </span>
+          </div>
         ))}
       </SearchDropdownMenu>
       <UseLocation

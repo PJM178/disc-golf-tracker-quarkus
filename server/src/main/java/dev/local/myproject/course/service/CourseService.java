@@ -1,6 +1,5 @@
 package dev.local.myproject.course.service;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.locationtech.jts.geom.Coordinate;
@@ -9,6 +8,7 @@ import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.PrecisionModel;
 
 import dev.local.myproject.course.dto.CourseCreateDto;
+import dev.local.myproject.course.dto.CourseLocationDto;
 import dev.local.myproject.course.entity.Course;
 import dev.local.myproject.course.model.CourseType;
 import dev.local.myproject.course.repository.CourseRepository;
@@ -72,26 +72,34 @@ public class CourseService {
         return courses;
     }
 
-    public List<Course> findCoursesByAddress(String searchTerm) {
+    public List<CourseLocationDto> findCoursesByAddress(String searchTerm) {
         // Require searchTerm to be more than 2 characters long since results using
-        // full text search can be huge if, e.g., only street numbers are provided and it matches        
+        // full text search can be huge if, e.g., only street numbers are provided and
+        // it matches
         if (searchTerm == null || searchTerm.length() < 3) {
             return List.of();
         }
 
-        return courseRepository.fullTextAndSimilarityCourseAddressSearch(searchTerm);
+        return courseRepository.fullTextAndSimilarityCourseAddressSearch(searchTerm)
+                .stream()
+                .map(course -> new CourseLocationDto(course))
+                .toList();
     }
 
-    public List<Course> findCoursesByCoordinates(double[] coordinates) {
-        // Require searchTerm to be more than 2 characters long since results using
-        // full text search can be huge if, e.g., only street numbers are provided and it matches        
-        if (coordinates.length < 2) {
-            return List.of();
-        }
+    public List<CourseLocationDto> findCoursesByCoordinates(Double latitude, Double longitude, int radius) {
+        return courseRepository.searchNearby(latitude, longitude, radius)
+                .stream()
+                .map(row -> {
+                    String name = String.valueOf(row[0]);
+                    String city = String.valueOf(row[1]);
+                    String postalCode = String.valueOf(row[2]);
+                    String address = String.valueOf(row[3]);
+                    double distanceToUserCoordinates = (double) row[4];
+                    double lat = (double) row[5];
+                    double lon = (double) row[6];
 
-        Log.info("Coordinates in the location search: " + Arrays.toString(coordinates));
-
-
-        return courseRepository.searchNearby(coordinates);
+                    return new CourseLocationDto(name, city, postalCode, address, distanceToUserCoordinates, lat, lon);
+                })
+                .toList();
     }
 }

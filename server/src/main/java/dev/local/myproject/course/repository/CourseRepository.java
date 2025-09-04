@@ -46,15 +46,18 @@ public class CourseRepository implements PanacheRepository<Course> {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Course> searchNearby(double[] coords) {
-        Point point = CourseService.pointFromLocation(coords[0], coords[1]);
+    public List<Object[]> searchNearby(Double latitude, Double longitude, int radius) {
+        Point point = CourseService.pointFromLocation(latitude, longitude);
 
         return getEntityManager().createNativeQuery("""
-                SELECT * FROM course
-                WHERE ST_DWithin(location, :point, :radius)
-                """, Course.class)
+                SELECT c.name, c.city, c.postal_code, c.address, ST_Distance(c.location, :point) as distance,
+                    ST_Y(c.location::geometry) AS latitude, ST_X(c.location::geometry) AS longitude
+                FROM course c
+                WHERE ST_DWithin(c.location, :point, :radius)
+                ORDER BY distance ASC
+                """)
                 .setParameter("point", point)
-                .setParameter("radius", 5000)
+                .setParameter("radius", radius)
                 .getResultList();
     }
 }

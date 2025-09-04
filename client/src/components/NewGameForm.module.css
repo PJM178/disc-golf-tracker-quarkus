@@ -80,3 +80,8 @@
 .new-game-form--form--text-field {
   width: 100%;
 }
+
+.new-game-form--form--search-result--container {
+  display: flex;
+  flex-direction: column;
+}
