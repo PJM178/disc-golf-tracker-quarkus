@@ -1,6 +1,7 @@
 package dev.local.myproject.course.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -97,8 +98,9 @@ public class CourseService {
                     double distanceToUserCoordinates = (double) row[4];
                     double lat = (double) row[5];
                     double lon = (double) row[6];
+                    UUID uuid = (UUID) row[7];
 
-                    return new CourseLocationDto(name, city, postalCode, address, distanceToUserCoordinates, lat, lon);
+                    return new CourseLocationDto(uuid, name, city, postalCode, address, distanceToUserCoordinates, lat, lon);
                 })
                 .toList();
     }

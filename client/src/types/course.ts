@@ -1,4 +1,8 @@
-export interface CourseLocationSearch {
+interface CourseBase {
+  uuid: string;
+}
+
+export interface CourseLocationSearch extends CourseBase {
   name: string;
   city: string;
   postalCode: string;

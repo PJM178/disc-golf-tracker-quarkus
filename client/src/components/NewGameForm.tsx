@@ -82,27 +82,43 @@ const FindCourse = () => {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [location, setLocation] = useState<Coordinates | null>(null);
 
-  // TODO: this is important
-  // when changing from text search to location search, if there is text in the input field
-  // the search gets triggered twice - fix this
   useEffect(() => {
-    if (debouncedValue || location) {
+    if (debouncedValue) {
       async function fetchCourses() {
         try {
-          console.log(location);
-          const res = await fetch(`http://localhost:8080/courses/search-full-text?location=${debouncedValue}${location ? "&lat=" + location.lat + "&lon=" + location.lon : ""}`, {
+          const res = await fetch(`http://localhost:8080/courses/search-full-text?location=${debouncedValue}`, {
             method: "GET",
           });
 
           if (res.ok) {
             const data = await res.json();
 
-            if (location) {
-              setLocationName("");
+            setData(data);
+          }
+        } catch (err) {
+          console.log("Something went wrong: ", err);
+        }
+      }
 
-              if (inputRef.current) {
-                inputRef.current.focus();
-              }
+      fetchCourses();
+    }
+  }, [debouncedValue]);
+
+  useEffect(() => {
+    if (location) {
+      async function fetchCourses() {
+        try {
+          const res = await fetch(`http://localhost:8080/courses/search-full-text?${location ? "&lat=" + location.lat + "&lon=" + location.lon : ""}`, {
+            method: "GET",
+          });
+
+          if (res.ok) {
+            const data = await res.json();
+
+            setLocationName("");
+
+            if (inputRef.current) {
+              inputRef.current.focus();
             }
 
             setData(data);
@@ -113,10 +129,8 @@ const FindCourse = () => {
       }
 
       fetchCourses();
-    } else {
-      setData([]);
     }
-  }, [debouncedValue, location]);
+  }, [location]);
 
   const handleSearchField = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLocationName(e.target.value);
@@ -132,7 +146,6 @@ const FindCourse = () => {
     }
   };
 
-  console.log(location);
   return (
     <div>
       <TextField
@@ -151,9 +164,9 @@ const FindCourse = () => {
         isOpen={isListVisible}
         setIsOpen={setIsListVisible}
       >
-        {data.map((r, i) => (
+        {data.map((r) => (
           <div
-            key={i}
+            key={r.uuid}
             className={styles["new-game-form--form--search-result--container"]}
           >
             <span>{r.name}</span>

@@ -51,7 +51,7 @@ public class CourseRepository implements PanacheRepository<Course> {
 
         return getEntityManager().createNativeQuery("""
                 SELECT c.name, c.city, c.postal_code, c.address, ST_Distance(c.location, :point) as distance,
-                    ST_Y(c.location::geometry) AS latitude, ST_X(c.location::geometry) AS longitude
+                    ST_Y(c.location::geometry) AS latitude, ST_X(c.location::geometry) AS longitude, c.uuid
                 FROM course c
                 WHERE ST_DWithin(c.location, :point, :radius)
                 ORDER BY distance ASC

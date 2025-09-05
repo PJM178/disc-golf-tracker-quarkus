@@ -1,8 +1,12 @@
 package dev.local.myproject.course.dto;
 
+import java.util.UUID;
+
 import dev.local.myproject.course.entity.Course;
 
 public class CourseLocationDto {
+
+    public UUID uuid;
     public String name;
     public String city;
     public String postalCode;
@@ -11,8 +15,9 @@ public class CourseLocationDto {
     public double lat;
     public double lon;
 
-    public CourseLocationDto(String name, String city, String postalCode, String address,
+    public CourseLocationDto(UUID uuid, String name, String city, String postalCode, String address,
             double distanceToUserCoordinates, double latitude, double longitude) {
+        this.uuid = uuid;
         this.name = name;
         this.city = city;
         this.postalCode = postalCode;
