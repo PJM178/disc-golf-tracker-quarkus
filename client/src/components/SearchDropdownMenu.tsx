@@ -7,10 +7,12 @@ interface SearchDropdownMenuProps {
   setSelectedIndex: React.Dispatch<React.SetStateAction<number | null>>;
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  ulClass?: string;
+  liClass?: string;
 }
 
 const SearchDropdownMenu = (props: SearchDropdownMenuProps) => {
-  const { children, anchorElement, setSelectedIndex, isOpen, setIsOpen } = props;
+  const { children, anchorElement, setSelectedIndex, isOpen, setIsOpen, liClass, ulClass } = props;
   const containerRef = useRef<HTMLUListElement>(null);
   const [rect, setRect] = useState<{ top: number; left: number; height: number; width: number } | null>(null);
   const childArray = useMemo(() => React.Children.toArray(children), [children]);
@@ -52,13 +54,13 @@ const SearchDropdownMenu = (props: SearchDropdownMenuProps) => {
       {childArray.length > 0 && rect && isOpen &&
         <ul
           ref={containerRef}
-          className={styles["list--container"]}
+          className={`${styles["list--container"]} ${ulClass ? ulClass : ""}`.trim()}
           style={{ top: (rect.top + rect.height) + "px", width: rect.width + "px" }}
         >
           {childArray.map((child, i) => (
             <li
               key={i}
-              className={styles["list--item"]}
+              className={`${styles["list--item"]}  ${liClass ? liClass : ""}`.trim()}
               onClick={() => handleSelectValue(i)}
             >
               {child}

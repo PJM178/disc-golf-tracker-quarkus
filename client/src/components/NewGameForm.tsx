@@ -172,6 +172,7 @@ const FindCourse = () => {
         setSelectedIndex={setSelectedIndex}
         isOpen={isListVisible}
         setIsOpen={setIsListVisible}
+        liClass={loadingData ? styles["li-class"] : undefined}
       >
         {loadingData ?
           <div
