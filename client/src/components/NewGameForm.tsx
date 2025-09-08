@@ -9,6 +9,7 @@ import SearchDropdownMenu from "./SearchDropdownMenu";
 import UseLocation from "./UseLocation";
 import { Coordinates } from "@/hooks/useGeolocation";
 import { CourseLocationSearch } from "@/types/course";
+import { JumpingDots } from "./Loading";
 
 interface AddPlayerInputProps {
   index: number;
@@ -81,10 +82,13 @@ const FindCourse = () => {
   const [isListVisible, setIsListVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [location, setLocation] = useState<Coordinates | null>(null);
+  const [loadingData, setLoadingData] = useState(false);
 
   useEffect(() => {
-    if (debouncedValue) {
+    if (debouncedValue && debouncedValue.length > 2) {
       async function fetchCourses() {
+        setLoadingData(true);
+
         try {
           const res = await fetch(`http://localhost:8080/courses/search-full-text?location=${debouncedValue}`, {
             method: "GET",
@@ -97,6 +101,8 @@ const FindCourse = () => {
           }
         } catch (err) {
           console.log("Something went wrong: ", err);
+        } finally {
+          setLoadingData(false);
         }
       }
 
@@ -107,6 +113,12 @@ const FindCourse = () => {
   useEffect(() => {
     if (location) {
       async function fetchCourses() {
+        setLoadingData(true);
+
+        if (inputRef.current) {
+          inputRef.current.focus();
+        }
+
         try {
           const res = await fetch(`http://localhost:8080/courses/search-full-text?${location ? "&lat=" + location.lat + "&lon=" + location.lon : ""}`, {
             method: "GET",
@@ -116,15 +128,12 @@ const FindCourse = () => {
             const data = await res.json();
 
             setLocationName("");
-
-            if (inputRef.current) {
-              inputRef.current.focus();
-            }
-
             setData(data);
           }
         } catch (err) {
           console.log("Something went wrong: ", err);
+        } finally {
+          setLoadingData(false);
         }
       }
 
@@ -145,7 +154,7 @@ const FindCourse = () => {
       setLocation(null);
     }
   };
-
+  console.log(data);
   return (
     <div>
       <TextField
@@ -164,19 +173,30 @@ const FindCourse = () => {
         isOpen={isListVisible}
         setIsOpen={setIsListVisible}
       >
-        {data.map((r) => (
+        {loadingData ?
           <div
-            key={r.uuid}
-            className={styles["new-game-form--form--search-result--container"]}
+            className={styles["new-game-form--form--search-result--container-loading"]}
           >
-            <span>{r.name}</span>
-            <span
-              className="subtext"
+            <JumpingDots />
+          </div> :
+          data.map((r) => (
+            <div
+              key={r.uuid}
+              className={styles["new-game-form--form--search-result--container"]}
             >
-              {r.address}, {r.postalCode} {r.city}
-            </span>
-          </div>
-        ))}
+              <div
+                className={styles["new-game-form--form--search-result--container-info"]}
+              >
+                <span>{r.name}</span>
+                <span
+                  className="subtext"
+                >
+                  {r.address}, {r.postalCode} {r.city}
+                </span>
+              </div>
+            </div>
+          ))
+        }
       </SearchDropdownMenu>
       <UseLocation
         setLocation={setLocation}

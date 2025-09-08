@@ -83,5 +83,21 @@
 
 .new-game-form--form--search-result--container {
   display: flex;
+}
+
+.new-game-form--form--search-result--container-info {
+  display: flex;
   flex-direction: column;
+}
+
+.new-game-form--form--search-result--container-distance {
+  display: flex;
+  flex-direction: column;
+}
+
+.new-game-form--form--search-result--container-loading {
+  display: flex;
+  height: 3rem;
+  justify-content: center;
+  align-items: center;
 }

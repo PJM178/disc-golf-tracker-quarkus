@@ -37,6 +37,7 @@ public class CourseLocationDto {
     }
 
     public CourseLocationDto(Course course) {
+        this.uuid = course.uuid;
         this.name = course.name;
         this.city = course.city;
         this.postalCode = course.postalCode;
