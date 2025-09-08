@@ -74,6 +74,16 @@ const AddPlayerInput = memo(function AddPlayerInput(props: AddPlayerInputProps) 
   );
 });
 
+const NoSearchResults = () => {
+  return (
+    <div
+      className={styles["new-game-form--form--search-result--container-loading"]}
+    >
+      <span>Ei hakutuloksia</span>
+    </div>
+  );
+}
+
 const FindCourse = () => {
   const [locationName, setLocationName] = useState<string>("");
   const { debouncedValue } = useDebounce(locationName, 500);
@@ -172,7 +182,7 @@ const FindCourse = () => {
         setSelectedIndex={setSelectedIndex}
         isOpen={isListVisible}
         setIsOpen={setIsListVisible}
-        liClass={loadingData ? styles["li-class"] : undefined}
+        liClass={loadingData || !data.length ? styles["li-class"] : undefined}
       >
         {loadingData ?
           <div
@@ -180,6 +190,7 @@ const FindCourse = () => {
           >
             <JumpingDots />
           </div> :
+          data.length ?
           data.map((r) => (
             <div
               key={r.uuid}
@@ -196,7 +207,8 @@ const FindCourse = () => {
                 </span>
               </div>
             </div>
-          ))
+          )) :
+          <NoSearchResults />
         }
       </SearchDropdownMenu>
       <UseLocation
