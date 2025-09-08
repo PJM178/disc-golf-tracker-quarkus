@@ -87,7 +87,7 @@ const NoSearchResults = () => {
 const FindCourse = () => {
   const [locationName, setLocationName] = useState<string>("");
   const { debouncedValue } = useDebounce(locationName, 500);
-  const [data, setData] = useState<CourseLocationSearch[]>([]);
+  const [data, setData] = useState<CourseLocationSearch[] | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [isListVisible, setIsListVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
@@ -164,7 +164,7 @@ const FindCourse = () => {
       setLocation(null);
     }
   };
-  console.log(data);
+
   return (
     <div>
       <TextField
@@ -182,7 +182,7 @@ const FindCourse = () => {
         setSelectedIndex={setSelectedIndex}
         isOpen={isListVisible}
         setIsOpen={setIsListVisible}
-        liClass={loadingData || !data.length ? styles["li-class"] : undefined}
+        liClass={loadingData || !data?.length ? styles["li-class"] : undefined}
       >
         {loadingData ?
           <div
@@ -190,25 +190,26 @@ const FindCourse = () => {
           >
             <JumpingDots />
           </div> :
-          data.length ?
-          data.map((r) => (
-            <div
-              key={r.uuid}
-              className={styles["new-game-form--form--search-result--container"]}
-            >
+          data?.length ?
+            data.map((r) => (
               <div
-                className={styles["new-game-form--form--search-result--container-info"]}
+                key={r.uuid}
+                className={styles["new-game-form--form--search-result--container"]}
               >
-                <span>{r.name}</span>
-                <span
-                  className="subtext"
+                <div
+                  className={styles["new-game-form--form--search-result--container-info"]}
                 >
-                  {r.address}, {r.postalCode} {r.city}
-                </span>
+                  <span>{r.name}</span>
+                  <span
+                    className="subtext"
+                  >
+                    {r.address}, {r.postalCode} {r.city}
+                  </span>
+                </div>
               </div>
-            </div>
-          )) :
-          <NoSearchResults />
+            )) : data === null ?
+              null :
+              <NoSearchResults />
         }
       </SearchDropdownMenu>
       <UseLocation
