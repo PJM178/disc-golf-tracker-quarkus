@@ -10,6 +10,7 @@ import UseLocation from "./UseLocation";
 import { Coordinates } from "@/hooks/useGeolocation";
 import { CourseLocationSearch } from "@/types/course";
 import { JumpingDots } from "./Loading";
+import useSearch from "@/hooks/useSearch";
 
 interface AddPlayerInputProps {
   index: number;
@@ -93,6 +94,23 @@ const FindCourse = () => {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [location, setLocation] = useState<Coordinates | null>(null);
   const [loadingData, setLoadingData] = useState(false);
+  const { isPending, isFetching, isLoading, isError, data: courseData, error } = useSearch({ query: debouncedValue, queryFn: fetchCourses, staleTime: 1000 * 60 });
+  console.log("Tanstack variables", isPending, isLoading, isFetching, isError, courseData, error);
+
+  async function fetchCourses(query: string) {
+    console.log("fetching tanstack");
+    const res = await fetch(`http://localhost:8080/courses/search-full-text?location=${query}`, {
+      method: "GET",
+    });
+
+    if (!res.ok) {
+      throw new Error("Network error: " + res.status + " " + res.statusText);
+    }
+
+    const data: CourseLocationSearch[] = await res.json();
+
+    return data;
+  }
 
   useEffect(() => {
     if (debouncedValue && debouncedValue.length > 2) {

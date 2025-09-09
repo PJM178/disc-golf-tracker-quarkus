@@ -2,7 +2,13 @@
 
 import NewGameForm from "@/components/NewGameForm";
 import { useUser } from "@/context/UserContext";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
+
+// TODO: move the QueryClientProvider to app layout.tsx with SSR considerations in future, for
+// now simply test it
+
+const queryClient = new QueryClient();
 
 const HelloUser = () => {
   const { user } = useUser();
@@ -12,7 +18,11 @@ const HelloUser = () => {
     <div>
       Nothing here
       {/* Test new game form here - remove when done */}
-      {isFormOpen && <NewGameForm closeDialog={() => setIsFormOpen(false)} />}
+      {isFormOpen &&
+        <QueryClientProvider client={queryClient}>
+          <NewGameForm closeDialog={() => setIsFormOpen(false)} />
+        </QueryClientProvider>
+      }
     </div>
   );
 
