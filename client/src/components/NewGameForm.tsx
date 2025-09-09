@@ -1,6 +1,6 @@
 import { Game, useGameState, Hole } from "@/context/GameStateContext";
 import { generateRandomId } from "@/utils/utilities";
-import { useState, useEffect, memo, useRef } from "react";
+import { useState, useEffect, memo, useRef, useCallback } from "react";
 import { Button, Switch } from "./Buttons";
 import styles from "./NewGameForm.module.css"
 import TextField from "./Inputs";
@@ -88,18 +88,22 @@ const NoSearchResults = () => {
 const FindCourse = () => {
   const [locationName, setLocationName] = useState<string>("");
   const { debouncedValue } = useDebounce(locationName, 500);
-  const [data, setData] = useState<CourseLocationSearch[] | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [isListVisible, setIsListVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [location, setLocation] = useState<Coordinates | null>(null);
-  const [loadingData, setLoadingData] = useState(false);
-  const { isPending, isFetching, isLoading, isError, data: courseData, error } = useSearch({ query: debouncedValue, queryFn: fetchCourses, staleTime: 1000 * 60 });
-  console.log("Tanstack variables", isPending, isLoading, isFetching, isError, courseData, error);
 
-  async function fetchCourses(query: string) {
-    console.log("fetching tanstack");
-    const res = await fetch(`http://localhost:8080/courses/search-full-text?location=${query}`, {
+  const fetchCourses = useCallback(async (query: string, location: Coordinates | null) => {
+    const url = new URL("http://localhost:8080/courses/search-full-text");
+
+    if (location) {
+      url.searchParams.set("lat", location.lat.toString());
+      url.searchParams.set("lon", location.lon.toString());
+    } else {
+      url.searchParams.set("location", query);
+    }
+
+    const res = await fetch(url.toString(), {
       method: "GET",
     });
 
@@ -107,67 +111,16 @@ const FindCourse = () => {
       throw new Error("Network error: " + res.status + " " + res.statusText);
     }
 
+    if (location) {
+      setLocationName("");
+    }
+
     const data: CourseLocationSearch[] = await res.json();
 
     return data;
-  }
+  }, []);
 
-  useEffect(() => {
-    if (debouncedValue && debouncedValue.length > 2) {
-      async function fetchCourses() {
-        setLoadingData(true);
-
-        try {
-          const res = await fetch(`http://localhost:8080/courses/search-full-text?location=${debouncedValue}`, {
-            method: "GET",
-          });
-
-          if (res.ok) {
-            const data = await res.json();
-
-            setData(data);
-          }
-        } catch (err) {
-          console.log("Something went wrong: ", err);
-        } finally {
-          setLoadingData(false);
-        }
-      }
-
-      fetchCourses();
-    }
-  }, [debouncedValue]);
-
-  useEffect(() => {
-    if (location) {
-      async function fetchCourses() {
-        setLoadingData(true);
-
-        if (inputRef.current) {
-          inputRef.current.focus();
-        }
-
-        try {
-          const res = await fetch(`http://localhost:8080/courses/search-full-text?${location ? "&lat=" + location.lat + "&lon=" + location.lon : ""}`, {
-            method: "GET",
-          });
-
-          if (res.ok) {
-            const data = await res.json();
-
-            setLocationName("");
-            setData(data);
-          }
-        } catch (err) {
-          console.log("Something went wrong: ", err);
-        } finally {
-          setLoadingData(false);
-        }
-      }
-
-      fetchCourses();
-    }
-  }, [location]);
+  const { isLoading, data, error } = useSearch({ query: location ? `${location.lat + location.lon}` : debouncedValue, queryFn: (query) => fetchCourses(query, location), staleTime: 1000 * 60 });
 
   const handleSearchField = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLocationName(e.target.value);
@@ -182,6 +135,14 @@ const FindCourse = () => {
       setLocation(null);
     }
   };
+
+  const handleClickUseLocation = () => {
+    setLocationName("");
+
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }
 
   return (
     <div>
@@ -200,9 +161,9 @@ const FindCourse = () => {
         setSelectedIndex={setSelectedIndex}
         isOpen={isListVisible}
         setIsOpen={setIsListVisible}
-        liClass={loadingData || !data?.length ? styles["li-class"] : undefined}
+        liClass={isLoading || !data?.length ? styles["li-class"] : undefined}
       >
-        {loadingData ?
+        {isLoading ?
           <div
             className={styles["new-game-form--form--search-result--container-loading"]}
           >
@@ -225,12 +186,13 @@ const FindCourse = () => {
                   </span>
                 </div>
               </div>
-            )) : data === null ?
-              null :
-              <NoSearchResults />
+            )) : data?.length === 0 ?
+              <NoSearchResults /> :
+              null
         }
       </SearchDropdownMenu>
       <UseLocation
+        onClick={handleClickUseLocation}
         setLocation={setLocation}
       />
     </div>

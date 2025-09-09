@@ -9,15 +9,17 @@ interface UseSearchOptions<T> {
    * Defaults to 0 (always refetch on mount).
    */
   staleTime?: number;
+  loadingDelay?: number;
 }
 
 const useSearch = <T,>({ query, queryFn, staleTime }: UseSearchOptions<T>) => {
+  console.log(query.length);
   return (
     useQuery({
       queryKey: ["search", query],
       queryFn: () => queryFn(query),
       staleTime: staleTime,
-      enabled: !!query,
+      enabled: query.length > 2,
     })
   );
 }

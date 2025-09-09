@@ -9,15 +9,17 @@ import { ProgressActivity } from "./Loading";
 
 interface UseLocationProps {
   setLocation: (args: Coordinates) => void;
+  onClick: () => void;
 }
 
 const UseLocation = (props: UseLocationProps) => {
   const [promptLocation, setPromptLocation] = useState(false);
   const { location, error, loading } = useGeolocation({ prompt: promptLocation });
-  const { setLocation } = props;
+  const { setLocation, onClick } = props;
 
   const handleClick = () => {
     setPromptLocation(true);
+    onClick();
   };
 
   useEffect(() => {
