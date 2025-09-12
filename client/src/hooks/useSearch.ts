@@ -3,17 +3,15 @@ import { useQuery } from "@tanstack/react-query";
 interface UseSearchOptions<T> {
   query: string;
   queryFn: (query: string) => Promise<T>;
-  
+
   /**
    * Optional: Time in milliseconds before the data is considered stale.
    * Defaults to 0 (always refetch on mount).
    */
   staleTime?: number;
-  loadingDelay?: number;
 }
 
 const useSearch = <T,>({ query, queryFn, staleTime }: UseSearchOptions<T>) => {
-  console.log(query.length);
   return (
     useQuery({
       queryKey: ["search", query],

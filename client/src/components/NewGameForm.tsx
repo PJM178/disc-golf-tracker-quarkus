@@ -122,6 +122,7 @@ const FindCourse = () => {
 
   const { isLoading, data, error } = useSearch({ query: location ? `${location.lat + location.lon}` : debouncedValue, queryFn: (query) => fetchCourses(query, location), staleTime: 1000 * 60 });
 
+  console.log(data);
   const handleSearchField = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLocationName(e.target.value);
   };
