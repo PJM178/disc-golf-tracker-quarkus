@@ -88,6 +88,7 @@
 .new-game-form--form--search-result--container-info {
   display: flex;
   flex-direction: column;
+  justify-content: center;
 }
 
 .new-game-form--form--search-result--container-distance {
