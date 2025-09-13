@@ -25,7 +25,7 @@ import jakarta.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 public class CourseResource {
 
-    private static final String DEFAULT_SEARCH_RADIUS = "100000";
+    private static final String DEFAULT_SEARCH_RADIUS = "1000000";
 
     @Inject
     CourseService courseService;

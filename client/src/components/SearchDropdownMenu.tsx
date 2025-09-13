@@ -33,6 +33,8 @@ const SearchDropdownMenu = (props: SearchDropdownMenuProps) => {
     if (e.target === anchorElement || e.target === containerRef.current ||
       document.activeElement === anchorElement
     ) return;
+    
+    if (e.target instanceof HTMLElement && e.target.closest("[data-ignore]")) return;
 
     setIsOpen(false);
   }, [anchorElement, setIsOpen]);

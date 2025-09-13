@@ -11,6 +11,8 @@ import { Coordinates } from "@/hooks/useGeolocation";
 import { CourseLocationSearch } from "@/types/course";
 import { JumpingDots } from "./Loading";
 import useSearch from "@/hooks/useSearch";
+import { keepPreviousData } from "@tanstack/react-query";
+import { AnchorWrapper } from "./Wrappers";
 
 interface AddPlayerInputProps {
   index: number;
@@ -122,7 +124,6 @@ const FindCourse = () => {
 
   const { isLoading, data, error } = useSearch({ query: location ? `${location.lat + location.lon}` : debouncedValue, queryFn: (query) => fetchCourses(query, location), staleTime: 1000 * 60 });
 
-  console.log(data);
   const handleSearchField = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLocationName(e.target.value);
   };
@@ -144,6 +145,8 @@ const FindCourse = () => {
       inputRef.current.focus();
     }
   }
+
+
 
   return (
     <div>
@@ -186,8 +189,22 @@ const FindCourse = () => {
                     {r.address}, {r.postalCode} {r.city}
                   </span>
                 </div>
+                {location &&
+                  <AnchorWrapper
+                    href={`https://www.google.com/maps/place/${r.lat},${r.lon}`}
+                    target="_blank"
+                    className={styles["new-game-form--form--search-result--container-location"]}
+                    onClick={(e) => e.stopPropagation()}
+                    data-ignore
+                  >
+                    <span>{(r.distanceToUserCoordinates / 1000).toFixed(2)} km</span>
+                    <span className={`material-symbol--container material-symbols-outlined`.trim()}>
+                      open_in_new
+                    </span>
+                  </AnchorWrapper>}
               </div>
-            )) : data?.length === 0 ?
+            ))
+            : data?.length === 0 ?
               <NoSearchResults /> :
               null
         }

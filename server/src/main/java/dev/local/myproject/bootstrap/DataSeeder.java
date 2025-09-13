@@ -61,9 +61,24 @@ public class DataSeeder {
             this.courseService.createCourse("Xamk - Mikkelin kampuksen frisbeegolfpuisto", 60.1698348, 24.9383805,
                     CourseType.OFFICIAL, "Mikkeli", "Tarkk'ampujankuja", "50100");
 
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 5; i++) {
                 this.courseService.createCourse("Xamk - Mikkelin kampuksen frisbeegolfpuisto" + i, 60.1698348, 24.9383805,
                         CourseType.OFFICIAL, "Mikkeli", "Tarkk'ampujankuja", "50100");
+            }
+
+            for (int i = 0; i < 5; i++) {
+                this.courseService.createCourse("Testipuisto mikkelissä" + i, 61.662276, 27.258753,
+                        CourseType.OFFICIAL, "Mikkeli", "Kaituentie 46 C 85", "50160");
+            }
+
+            for (int i = 0; i < 5; i++) {
+                this.courseService.createCourse("Testipuisto jossakin" + i, 62.695127, 28.350726,
+                        CourseType.OFFICIAL, "Mikkeli", "katu 46 C 85", "50160");
+            }
+
+            for (int i = 0; i < 5; i++) {
+                this.courseService.createCourse("Testipuisto helsingissä" + i, 60.260876, 25.024805,
+                        CourseType.OFFICIAL, "Mikkeli", "katu 46 C 85", "50160");
             }
         }
     }

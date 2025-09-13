@@ -1,4 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
+import {
+  useQuery,
+  UseQueryOptions,
+} from "@tanstack/react-query";
 
 interface UseSearchOptions<T> {
   query: string;
@@ -9,15 +12,22 @@ interface UseSearchOptions<T> {
    * Defaults to 0 (always refetch on mount).
    */
   staleTime?: number;
+
+  /**
+   * Optional: placeholder data strategy.
+   * e.g. keepPreviousData, a function, or raw placeholder data
+   */
+  placeholderData?: UseQueryOptions<T>["placeholderData"];
 }
 
-const useSearch = <T,>({ query, queryFn, staleTime }: UseSearchOptions<T>) => {
+const useSearch = <T,>({ query, queryFn, staleTime, placeholderData }: UseSearchOptions<T>) => {
   return (
     useQuery({
       queryKey: ["search", query],
       queryFn: () => queryFn(query),
       staleTime: staleTime,
       enabled: query.length > 2,
+      placeholderData,
     })
   );
 }

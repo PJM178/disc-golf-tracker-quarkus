@@ -22,3 +22,7 @@
 .list--item:hover {
   background-color: var(--stroke-weak--lighter);
 }
+
+.list--item:hover:has(a:hover) {
+  background-color: unset;
+}
