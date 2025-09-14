@@ -8,7 +8,7 @@ import useDebounce from "@/hooks/useDebounce";
 import SearchDropdownMenu from "./SearchDropdownMenu";
 import UseLocation from "./UseLocation";
 import { Coordinates } from "@/hooks/useGeolocation";
-import { CourseLocationSearch } from "@/types/course";
+import { CourseLocationSearch, CursorPaginatedCourseLocationSearch } from "@/types/course";
 import { JumpingDots } from "./Loading";
 import useSearch from "@/hooks/useSearch";
 import { keepPreviousData } from "@tanstack/react-query";
@@ -101,6 +101,8 @@ const FindCourse = () => {
     if (location) {
       url.searchParams.set("lat", location.lat.toString());
       url.searchParams.set("lon", location.lon.toString());
+      url.searchParams.set("cursorDistance", (334395.3756592).toString());
+      url.searchParams.set("cursorUuid", "0eb1ef84-3f06-41bf-bc37-69668bcbc8ae");
     } else {
       url.searchParams.set("location", query);
     }
@@ -117,7 +119,7 @@ const FindCourse = () => {
       setLocationName("");
     }
 
-    const data: CourseLocationSearch[] = await res.json();
+    const data: CursorPaginatedCourseLocationSearch = await res.json();
 
     return data;
   }, []);
@@ -165,7 +167,7 @@ const FindCourse = () => {
         setSelectedIndex={setSelectedIndex}
         isOpen={isListVisible}
         setIsOpen={setIsListVisible}
-        liClass={isLoading || !data?.length ? styles["li-class"] : undefined}
+        liClass={isLoading || !data?.data.length ? styles["li-class"] : undefined}
       >
         {isLoading ?
           <div
@@ -173,8 +175,8 @@ const FindCourse = () => {
           >
             <JumpingDots />
           </div> :
-          data?.length ?
-            data.map((r) => (
+          data?.data.length ?
+            data.data.map((r) => (
               <div
                 key={r.uuid}
                 className={styles["new-game-form--form--search-result--container"]}
@@ -204,7 +206,7 @@ const FindCourse = () => {
                   </AnchorWrapper>}
               </div>
             ))
-            : data?.length === 0 ?
+            : data?.data.length === 0 ?
               <NoSearchResults /> :
               null
         }

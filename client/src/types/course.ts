@@ -11,3 +11,13 @@ export interface CourseLocationSearch extends CourseBase {
   lat: number;
   lon: number;
 }
+
+
+
+export interface CursorPaginatedCourseLocationSearch {
+  data: CourseLocationSearch[];
+  nextCursor: {
+    distance: number;
+    uuid: string;
+  };
+}
