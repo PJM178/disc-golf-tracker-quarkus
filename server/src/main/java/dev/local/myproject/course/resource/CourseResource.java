@@ -2,10 +2,12 @@ package dev.local.myproject.course.resource;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import dev.local.myproject.course.dto.CourseCreateDto;
 import dev.local.myproject.course.dto.CourseDto;
 import dev.local.myproject.course.dto.CourseLocationDto;
+import dev.local.myproject.course.dto.CoursesPaginatedResponseDto;
 import dev.local.myproject.course.entity.Course;
 import dev.local.myproject.course.service.CourseService;
 import io.quarkus.logging.Log;
@@ -65,21 +67,29 @@ public class CourseResource {
             @QueryParam("location") String location,
             @QueryParam("lat") Double latitude,
             @QueryParam("lon") Double longitude,
-            @QueryParam("radius") @DefaultValue(DEFAULT_SEARCH_RADIUS) int radius) {
+            @QueryParam("radius") @DefaultValue(DEFAULT_SEARCH_RADIUS) int radius,
+            @QueryParam("cursorDistance") Double cursorDistance,
+            @QueryParam("cursorUuid") UUID cursorUuid,
+            @QueryParam("limit") @DefaultValue("10") int limit) {
         Log.infof("Params: lat %s, lon %s, radius %s, address %s", latitude, longitude, radius, location);
 
-        List<CourseLocationDto> results;
-
         if (latitude != null && longitude != null) {
-            results = courseService.findCoursesByCoordinates(latitude, longitude, radius);
+            CoursesPaginatedResponseDto results = courseService.findCoursesByCoordinates(latitude, longitude, radius,
+                    cursorDistance, cursorUuid, limit);
+
+            Log.info("Courses found in DB using user coordinates: " + results);
+
+            return Response
+                    .ok(results)
+                    .build();
         } else {
-            results = courseService.findCoursesByAddress(location);
+            List<CourseLocationDto> results = courseService.findCoursesByAddress(location);
+
+            Log.info("Courses found in DB using full text search and triagram similarity: " + results);
+
+            return Response
+                    .ok(results)
+                    .build();
         }
-
-        Log.info("Courses found in DB: " + results);
-
-        return Response
-                .ok(results)
-                .build();
     }
 }

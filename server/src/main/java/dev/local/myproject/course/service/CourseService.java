@@ -10,6 +10,7 @@ import org.locationtech.jts.geom.PrecisionModel;
 
 import dev.local.myproject.course.dto.CourseCreateDto;
 import dev.local.myproject.course.dto.CourseLocationDto;
+import dev.local.myproject.course.dto.CoursesPaginatedResponseDto;
 import dev.local.myproject.course.entity.Course;
 import dev.local.myproject.course.model.CourseType;
 import dev.local.myproject.course.repository.CourseRepository;
@@ -87,9 +88,13 @@ public class CourseService {
                 .toList();
     }
 
-    public List<CourseLocationDto> findCoursesByCoordinates(Double latitude, Double longitude, int radius) {
-        return courseRepository.searchNearby(latitude, longitude, radius)
-                .stream()
+    public CoursesPaginatedResponseDto findCoursesByCoordinates(Double latitude, Double longitude, int radius,
+            Double cursorDistance, UUID cursorUuid, int limit) {
+        List<Object[]> rows = courseRepository.searchNearby(latitude, longitude, radius, cursorDistance, cursorUuid,
+                limit + 1);
+
+        List<CourseLocationDto> courses = rows.stream()
+                .limit(limit)
                 .map(row -> {
                     String name = String.valueOf(row[0]);
                     String city = String.valueOf(row[1]);
@@ -100,8 +105,38 @@ public class CourseService {
                     double lon = (double) row[6];
                     UUID uuid = (UUID) row[7];
 
-                    return new CourseLocationDto(uuid, name, city, postalCode, address, distanceToUserCoordinates, lat, lon);
+                    return new CourseLocationDto(uuid, name, city, postalCode, address, distanceToUserCoordinates, lat,
+                            lon);
                 })
                 .toList();
+        Log.info("These are the courses" + courses);
+        CoursesPaginatedResponseDto.Cursor nextCursor = null;
+
+        // Earlier rows that are returned are limit + 1, so if this is true, it means that there are more courses
+        // in the db
+        if (rows.size() > limit) {
+            Object[] lastRow = rows.get(limit - 1);
+            double lastDistance = (double) lastRow[4];
+            UUID uuid = (UUID) lastRow[7];
+            nextCursor = new CoursesPaginatedResponseDto.Cursor(lastDistance, uuid);
+        }
+
+        return new CoursesPaginatedResponseDto(courses, nextCursor);
+        // return courseRepository.searchNearby(latitude, longitude, radius, cursorDistance, cursorUuid, limit)
+        //         .stream()
+        //         .map(row -> {
+        //             String name = String.valueOf(row[0]);
+        //             String city = String.valueOf(row[1]);
+        //             String postalCode = String.valueOf(row[2]);
+        //             String address = String.valueOf(row[3]);
+        //             double distanceToUserCoordinates = (double) row[4];
+        //             double lat = (double) row[5];
+        //             double lon = (double) row[6];
+        //             UUID uuid = (UUID) row[7];
+
+        //             return new CourseLocationDto(uuid, name, city, postalCode, address, distanceToUserCoordinates, lat,
+        //                     lon);
+        //         })
+        //         .toList();
     }
 }

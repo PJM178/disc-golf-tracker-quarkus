@@ -1,6 +1,7 @@
 package dev.local.myproject.course.repository;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.locationtech.jts.geom.Point;
 
@@ -8,6 +9,8 @@ import dev.local.myproject.course.entity.Course;
 import dev.local.myproject.course.service.CourseService;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 
 @ApplicationScoped
 public class CourseRepository implements PanacheRepository<Course> {
@@ -46,18 +49,44 @@ public class CourseRepository implements PanacheRepository<Course> {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Object[]> searchNearby(Double latitude, Double longitude, int radius) {
+    public List<Object[]> searchNearby(Double latitude, Double longitude, int radius, Double lastDistance,
+            UUID lastUuid, int limit) {
         Point point = CourseService.pointFromLocation(latitude, longitude);
 
-        return getEntityManager().createNativeQuery("""
-                SELECT c.name, c.city, c.postal_code, c.address, ST_Distance(c.location, :point) as distance,
-                    ST_Y(c.location::geometry) AS latitude, ST_X(c.location::geometry) AS longitude, c.uuid
+        String baseQuery = """
+                SELECT  c.name, c.city, c.postal_code, c.address,
+                        ST_Distance(c.location, :point) as distance,
+                        ST_Y(c.location::geometry) AS latitude,
+                        ST_X(c.location::geometry) AS longitude,
+                        c.uuid
                 FROM course c
                 WHERE ST_DWithin(c.location, :point, :radius)
-                ORDER BY distance ASC
-                """)
+                """;
+
+        if (lastDistance != null && lastUuid != null) {
+            baseQuery += """
+                    AND (
+                        ST_Distance(c.location, :point) > :lastDistance
+                        OR (ST_Distance(c.location, :point) = :lastDistance AND c.uuid > :lastUuid)
+                    )
+                    """;
+        }
+
+        baseQuery += """
+                ORDER BY distance ASC, c.uuid ASC
+                LIMIT :limit
+                """;
+
+        Query query = getEntityManager().createNativeQuery(baseQuery)
                 .setParameter("point", point)
                 .setParameter("radius", radius)
-                .getResultList();
+                .setParameter("limit", limit);
+
+        if (lastDistance != null && lastUuid != null) {
+            query.setParameter("lastDistance", lastDistance);
+            query.setParameter("lastUuid", lastUuid);
+        }
+
+        return query.getResultList();
     }
 }
