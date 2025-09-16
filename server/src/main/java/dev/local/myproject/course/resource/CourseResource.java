@@ -6,8 +6,8 @@ import java.util.UUID;
 
 import dev.local.myproject.course.dto.CourseCreateDto;
 import dev.local.myproject.course.dto.CourseDto;
-import dev.local.myproject.course.dto.CourseLocationDto;
-import dev.local.myproject.course.dto.CoursesPaginatedResponseDto;
+import dev.local.myproject.course.dto.CourseSearchTextCursorDto;
+import dev.local.myproject.course.dto.CoursesLocationCursorDto;
 import dev.local.myproject.course.entity.Course;
 import dev.local.myproject.course.service.CourseService;
 import io.quarkus.logging.Log;
@@ -32,6 +32,9 @@ public class CourseResource {
     @Inject
     CourseService courseService;
 
+    @Inject
+    CourseSearchResource courseSearchResource;
+
     @POST
     @Path("/new")
     public Response createNewCourse(CourseCreateDto course) {
@@ -42,7 +45,7 @@ public class CourseResource {
     }
 
     @GET
-    @Path("/search")
+    @Path("/searchs")
     public Response searchCoursesByLocation(@QueryParam("location") String location,
             @QueryParam("coordinates") String coordinates) {
         int[] coords = Arrays.stream(coordinates.split(","))
@@ -74,7 +77,8 @@ public class CourseResource {
         Log.infof("Params: lat %s, lon %s, radius %s, address %s", latitude, longitude, radius, location);
 
         if (latitude != null && longitude != null) {
-            CoursesPaginatedResponseDto results = courseService.findCoursesByCoordinates(latitude, longitude, radius,
+            CoursesLocationCursorDto results = courseService.findCoursesByCoordinates(latitude,
+                    longitude, radius,
                     cursorDistance, cursorUuid, limit);
 
             Log.info("Courses found in DB using user coordinates: " + results);
@@ -83,7 +87,7 @@ public class CourseResource {
                     .ok(results)
                     .build();
         } else {
-            List<CourseLocationDto> results = courseService.findCoursesByAddress(location);
+            CourseSearchTextCursorDto results = courseService.findCoursesByAddress(location);
 
             Log.info("Courses found in DB using full text search and triagram similarity: " + results);
 
@@ -91,5 +95,11 @@ public class CourseResource {
                     .ok(results)
                     .build();
         }
+    }
+
+    // Search resources enpoint - enpoints are under the injected instance
+    @Path("/search")
+    public CourseSearchResource search() {
+        return courseSearchResource;
     }
 }

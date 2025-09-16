@@ -9,8 +9,10 @@ import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.PrecisionModel;
 
 import dev.local.myproject.course.dto.CourseCreateDto;
+import dev.local.myproject.course.dto.CourseDto;
 import dev.local.myproject.course.dto.CourseLocationDto;
-import dev.local.myproject.course.dto.CoursesPaginatedResponseDto;
+import dev.local.myproject.course.dto.CourseSearchTextCursorDto;
+import dev.local.myproject.course.dto.CoursesLocationCursorDto;
 import dev.local.myproject.course.entity.Course;
 import dev.local.myproject.course.model.CourseType;
 import dev.local.myproject.course.repository.CourseRepository;
@@ -74,21 +76,23 @@ public class CourseService {
         return courses;
     }
 
-    public List<CourseLocationDto> findCoursesByAddress(String searchTerm) {
+    public CourseSearchTextCursorDto findCoursesByAddress(String searchTerm) {
         // Require searchTerm to be more than 2 characters long since results using
         // full text search can be huge if, e.g., only street numbers are provided and
         // it matches
         if (searchTerm == null || searchTerm.length() < 3) {
-            return List.of();
+            return new CourseSearchTextCursorDto(List.of());
         }
 
-        return courseRepository.fullTextAndSimilarityCourseAddressSearch(searchTerm)
+        List<CourseDto> courses = courseRepository.fullTextAndSimilarityCourseAddressSearch(searchTerm)
                 .stream()
-                .map(course -> new CourseLocationDto(course))
+                .map(course -> new CourseDto(course))
                 .toList();
+
+        return new CourseSearchTextCursorDto(courses);
     }
 
-    public CoursesPaginatedResponseDto findCoursesByCoordinates(Double latitude, Double longitude, int radius,
+    public CoursesLocationCursorDto findCoursesByCoordinates(Double latitude, Double longitude, int radius,
             Double cursorDistance, UUID cursorUuid, int limit) {
         List<Object[]> rows = courseRepository.searchNearby(latitude, longitude, radius, cursorDistance, cursorUuid,
                 limit + 1);
@@ -110,33 +114,19 @@ public class CourseService {
                 })
                 .toList();
         Log.info("These are the courses" + courses);
-        CoursesPaginatedResponseDto.Cursor nextCursor = null;
 
-        // Earlier rows that are returned are limit + 1, so if this is true, it means that there are more courses
-        // in the db
+        double nextDistance = 0;
+        // If nextUuid is null it means that cursor object is null
+        UUID nextUuid = null;
+
+        // Earlier rows that are returned are limit + 1, so if this is true, it means
+        // that there are more courses in the db so update the cursor information
         if (rows.size() > limit) {
             Object[] lastRow = rows.get(limit - 1);
-            double lastDistance = (double) lastRow[4];
-            UUID uuid = (UUID) lastRow[7];
-            nextCursor = new CoursesPaginatedResponseDto.Cursor(lastDistance, uuid);
+            nextDistance = (double) lastRow[4];
+            nextUuid = (UUID) lastRow[7];
         }
 
-        return new CoursesPaginatedResponseDto(courses, nextCursor);
-        // return courseRepository.searchNearby(latitude, longitude, radius, cursorDistance, cursorUuid, limit)
-        //         .stream()
-        //         .map(row -> {
-        //             String name = String.valueOf(row[0]);
-        //             String city = String.valueOf(row[1]);
-        //             String postalCode = String.valueOf(row[2]);
-        //             String address = String.valueOf(row[3]);
-        //             double distanceToUserCoordinates = (double) row[4];
-        //             double lat = (double) row[5];
-        //             double lon = (double) row[6];
-        //             UUID uuid = (UUID) row[7];
-
-        //             return new CourseLocationDto(uuid, name, city, postalCode, address, distanceToUserCoordinates, lat,
-        //                     lon);
-        //         })
-        //         .toList();
+        return new CoursesLocationCursorDto(courses, nextDistance, nextUuid);
     }
 }

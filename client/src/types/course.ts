@@ -12,12 +12,28 @@ export interface CourseLocationSearch extends CourseBase {
   lon: number;
 }
 
+export interface CourseTextSearch extends CourseBase {
+  name: string;
+  city: string;
+  postalCode: string;
+  address: string;
+}
 
+export interface LocationCursor {
+  distance: number;
+  uuid: string;
+}
 
 export interface CursorPaginatedCourseLocationSearch {
   data: CourseLocationSearch[];
-  nextCursor: {
-    distance: number;
-    uuid: string;
-  };
+  nextCursor: LocationCursor | null;
+}
+
+export interface TextCursor {
+  uuid: string;
+}
+
+export interface CursorPaginatedCourseTextSearch {
+  data: CourseTextSearch[];
+  nextCursor: TextCursor | null;
 }

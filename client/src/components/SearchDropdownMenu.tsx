@@ -4,23 +4,54 @@ import styles from "./SearchDropdownMenu.module.css";
 interface SearchDropdownMenuProps {
   children: React.ReactNode;
   anchorElement: HTMLElement | null;
-  setSelectedIndex: React.Dispatch<React.SetStateAction<number | null>>;
+  setSelectedIndex: React.Dispatch<React.SetStateAction<string | null>>;
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   ulClass?: string;
   liClass?: string;
 }
 
+interface ItemProps {
+  id?: string;
+  callback?: () => void;
+  disabled?: boolean;
+  children: React.ReactNode;
+}
+
+function isDropdownItem(child: React.ReactNode): child is React.ReactElement<ItemProps> {
+  return React.isValidElement(child) && child.type === Item;
+}
+
+const Item = ({ children }: ItemProps) => <>{children}</>;
+
 const SearchDropdownMenu = (props: SearchDropdownMenuProps) => {
   const { children, anchorElement, setSelectedIndex, isOpen, setIsOpen, liClass, ulClass } = props;
-  const containerRef = useRef<HTMLUListElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [rect, setRect] = useState<{ top: number; left: number; height: number; width: number } | null>(null);
-  const childArray = useMemo(() => React.Children.toArray(children), [children]);
 
-  const handleSelectValue = (index: number) => {
-    setSelectedIndex(index);
+  const handleClickElement = (e: React.MouseEvent<HTMLLIElement, MouseEvent>, value?: string, callback?: () => void) => {
+    setSelectedIndex(value || "");
+
+    if (callback) {
+      callback();
+
+      return;
+    }
+
     setIsOpen(false);
   };
+
+  const items = useMemo(() => {
+    const result: { id?: string, callback?: () => void; disabled?: boolean, element: React.ReactNode }[] = [];
+
+    React.Children.forEach(children, (child) => {
+      if (isDropdownItem(child)) {
+        result.push({ id: child.props.id, callback: child.props.callback, disabled: child.props.disabled, element: child.props.children });
+      }
+    });
+
+    return result;
+  }, [children]);
 
   useEffect(() => {
     if (anchorElement) {
@@ -30,11 +61,9 @@ const SearchDropdownMenu = (props: SearchDropdownMenuProps) => {
   }, [anchorElement]);
 
   const handleClickEvent = useCallback((e: PointerEvent) => {
-    if (e.target === anchorElement || e.target === containerRef.current ||
-      document.activeElement === anchorElement
-    ) return;
-    
-    if (e.target instanceof HTMLElement && e.target.closest("[data-ignore]")) return;
+    if (e.target === anchorElement || document.activeElement === anchorElement) return;
+
+    if (containerRef.current?.contains(e.target as HTMLElement)) return;
 
     setIsOpen(false);
   }, [anchorElement, setIsOpen]);
@@ -52,25 +81,28 @@ const SearchDropdownMenu = (props: SearchDropdownMenuProps) => {
   return (
     <div
       className={styles["container"]}
+      ref={containerRef}
     >
-      {childArray.length > 0 && rect && isOpen &&
+      {items.length > 0 && rect && isOpen &&
         <ul
-          ref={containerRef}
           className={`${styles["list--container"]} ${ulClass ? ulClass : ""}`.trim()}
           style={{ top: (rect.top + rect.height) + "px", width: rect.width + "px" }}
         >
-          {childArray.map((child, i) => (
+          {items.map((item, i) => (
             <li
               key={i}
-              className={`${styles["list--item"]}  ${liClass ? liClass : ""}`.trim()}
-              onClick={() => handleSelectValue(i)}
+              className={`${styles["list--item"]}  ${liClass ? liClass : ""} ${item.disabled ? styles["list--item-disabled"] : ""}`.trim()}
+              onClick={(e) => handleClickElement(e, item.id, item.callback)}
+              data-ignore={item.callback ? true : false}
             >
-              {child}
+              {item.element}
             </li>
           ))}
         </ul>}
     </div>
   );
 };
+
+SearchDropdownMenu.Item = Item;
 
 export default SearchDropdownMenu;

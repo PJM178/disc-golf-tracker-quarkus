@@ -8,11 +8,15 @@ import useDebounce from "@/hooks/useDebounce";
 import SearchDropdownMenu from "./SearchDropdownMenu";
 import UseLocation from "./UseLocation";
 import { Coordinates } from "@/hooks/useGeolocation";
-import { CourseLocationSearch, CursorPaginatedCourseLocationSearch } from "@/types/course";
+import {
+  CourseLocationSearch, CourseTextSearch, CursorPaginatedCourseLocationSearch, CursorPaginatedCourseTextSearch,
+  LocationCursor, TextCursor
+} from "@/types/course";
 import { JumpingDots } from "./Loading";
 import useSearch from "@/hooks/useSearch";
-import { keepPreviousData } from "@tanstack/react-query";
+import { keepPreviousData, useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { AnchorWrapper } from "./Wrappers";
+import React from "react";
 
 interface AddPlayerInputProps {
   index: number;
@@ -92,44 +96,111 @@ const FindCourse = () => {
   const { debouncedValue } = useDebounce(locationName, 500);
   const inputRef = useRef<HTMLInputElement>(null);
   const [isListVisible, setIsListVisible] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState<string | null>(null);
   const [location, setLocation] = useState<Coordinates | null>(null);
 
-  const fetchCourses = useCallback(async (query: string, location: Coordinates | null) => {
-    const url = new URL("http://localhost:8080/courses/search-full-text");
+  const fetchCoursesTextCursor = useCallback(async (query: string, nextCursor: TextCursor | null) => {
+    if (query.length > 2) {
+      const url = new URL("http://localhost:8080/courses/search/text");
 
-    if (location) {
-      url.searchParams.set("lat", location.lat.toString());
-      url.searchParams.set("lon", location.lon.toString());
-      url.searchParams.set("cursorDistance", (334395.3756592).toString());
-      url.searchParams.set("cursorUuid", "0eb1ef84-3f06-41bf-bc37-69668bcbc8ae");
-    } else {
-      url.searchParams.set("location", query);
+      url.searchParams.set("query", query);
+
+      if (nextCursor) {
+        url.searchParams.set("cursorUuid", nextCursor.uuid);
+      }
+
+      const res = await fetch(url.toString(), {
+        method: "GET",
+      });
+
+      if (!res.ok) {
+        throw new Error("Network error: " + res.status + " " + res.statusText);
+      }
+
+      const data: CursorPaginatedCourseTextSearch = await res.json();
+
+      return data;
     }
-
-    const res = await fetch(url.toString(), {
-      method: "GET",
-    });
-
-    if (!res.ok) {
-      throw new Error("Network error: " + res.status + " " + res.statusText);
-    }
-
-    if (location) {
-      setLocationName("");
-    }
-
-    const data: CursorPaginatedCourseLocationSearch = await res.json();
-
-    return data;
   }, []);
 
-  const { isLoading, data, error } = useSearch({ query: location ? `${location.lat + location.lon}` : debouncedValue, queryFn: (query) => fetchCourses(query, location), staleTime: 1000 * 60 });
+  // const { isLoading, data, error } = useSearch({ query: location ? `${location.lat + location.lon}` : debouncedValue, queryFn: (query) => fetchCourses(query, location), staleTime: 1000 * 60 });
 
+  const fetchCoursesLocationCursor = useCallback(async (location: Coordinates | null, nextCursor: LocationCursor | null) => {
+    console.log("called");
+    if (location) {
+      const url = new URL("http://localhost:8080/courses/search/location");
+
+      url.searchParams.set("lat", location.lat.toString());
+      url.searchParams.set("lon", location.lon.toString());
+
+      if (nextCursor) {
+        url.searchParams.set("cursorDistance", nextCursor.distance.toString());
+        url.searchParams.set("cursorUuid", nextCursor.uuid);
+      }
+
+      const res = await fetch(url.toString(), {
+        method: "GET",
+      });
+
+      if (!res.ok) {
+        throw new Error("Network error: " + res.status + " " + res.statusText);
+      }
+
+      const data: CursorPaginatedCourseLocationSearch = await res.json();
+
+      return data;
+    }
+  }, []);
+
+  const {
+    data: IData,
+    error: IError,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+    status,
+    isLoading: ILoading,
+  } = useInfiniteQuery({
+    queryKey: ['courses', location, location?.lat, location?.lon, debouncedValue],
+    queryFn: ({ pageParam }) => fetchCoursesInfinite(location ? `${location.lat + location.lon}` : debouncedValue, location, pageParam),
+    initialPageParam: { distance: 0, uuid: "" },
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    enabled: debouncedValue.length > 2 || !!location,
+    staleTime: 60000,
+  });
+
+  const textSearchQuery = useInfiniteQuery({
+    queryKey: ["courses", "text", debouncedValue],
+    queryFn: ({ pageParam }) => fetchCoursesTextCursor(debouncedValue, pageParam),
+    initialPageParam: { uuid: "" },
+    getNextPageParam: (lastPage) => lastPage?.nextCursor,
+    enabled: debouncedValue.length > 2,
+    staleTime: 1000 * 60,
+  });
+
+  console.log(textSearchQuery.data);
+
+  const infiniteLocationQuery = useInfiniteQuery({
+    queryKey: ["Courses", "location", location, location?.lat, location?.lon],
+    queryFn: ({ pageParam }) => fetchCoursesLocationCursor(location, pageParam),
+    initialPageParam: { distance: 0, uuid: "" },
+    getNextPageParam: (lastPage) => lastPage?.nextCursor,
+    enabled: !!location,
+    staleTime: 60000,
+  });
+
+  console.log(infiniteLocationQuery.data);
+
+  // console.log(IData);
+  // console.log(isFetching);
+  // console.log(isFetchingNextPage);
+  // console.log(hasNextPage);
+  // console.log(ILoading);
   const handleSearchField = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLocationName(e.target.value);
   };
-
+  console.log(IData);
   const handleFocus = () => {
     setIsListVisible(true);
   };
@@ -142,14 +213,13 @@ const FindCourse = () => {
 
   const handleClickUseLocation = () => {
     setLocationName("");
-
+    console.log("here");
     if (inputRef.current) {
       inputRef.current.focus();
     }
   }
-
-
-
+  console.log(location);
+  console.log(locationName);
   return (
     <div>
       <TextField
@@ -167,54 +237,64 @@ const FindCourse = () => {
         setSelectedIndex={setSelectedIndex}
         isOpen={isListVisible}
         setIsOpen={setIsListVisible}
-        liClass={isLoading || !data?.data.length ? styles["li-class"] : undefined}
+        liClass={ILoading || !IData?.pages.length ? styles["li-class"] : undefined}
       >
-        {isLoading ?
-          <div
-            className={styles["new-game-form--form--search-result--container-loading"]}
-          >
-            <JumpingDots />
-          </div> :
-          data?.data.length ?
-            data.data.map((r) => (
-              <div
-                key={r.uuid}
-                className={styles["new-game-form--form--search-result--container"]}
-              >
+        {ILoading ?
+          <SearchDropdownMenu.Item>
+            <div
+              className={styles["new-game-form--form--search-result--container-loading"]}
+            >
+              <JumpingDots />
+            </div>
+          </SearchDropdownMenu.Item> :
+          IData ?
+            [...IData.pages.flatMap((group) =>
+              group.data.map((r) => (
+                <SearchDropdownMenu.Item key={r.uuid} id={r.uuid}>
+                  <div className={styles["new-game-form--form--search-result--container"]}>
+                    <div className={styles["new-game-form--form--search-result--container-info"]}>
+                      <span>{r.name}</span>
+                      <span className="subtext">
+                        {r.address}, {r.postalCode} {r.city}
+                      </span>
+                    </div>
+                    {location && (
+                      <AnchorWrapper
+                        href={`https://www.google.com/maps/place/${r.lat},${r.lon}`}
+                        target="_blank"
+                        className={styles["new-game-form--form--search-result--container-location"]}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <span>{(r.distanceToUserCoordinates / 1000).toFixed(2)} km</span>
+                        <span className="material-symbol--container material-symbols-outlined">
+                          open_in_new
+                        </span>
+                      </AnchorWrapper>
+                    )}
+                  </div>
+                </SearchDropdownMenu.Item>
+              ))
+            ),
+            (location || IData?.pages[0].data.length === 0) && <SearchDropdownMenu.Item key="fetch-more" callback={fetchNextPage} disabled={isFetchingNextPage || !hasNextPage}>
+              {isFetchingNextPage ?
                 <div
-                  className={styles["new-game-form--form--search-result--container-info"]}
+                  className={styles["new-game-form--form--search-result--container-loading"]}
                 >
-                  <span>{r.name}</span>
-                  <span
-                    className="subtext"
-                  >
-                    {r.address}, {r.postalCode} {r.city}
-                  </span>
-                </div>
-                {location &&
-                  <AnchorWrapper
-                    href={`https://www.google.com/maps/place/${r.lat},${r.lon}`}
-                    target="_blank"
-                    className={styles["new-game-form--form--search-result--container-location"]}
-                    onClick={(e) => e.stopPropagation()}
-                    data-ignore
-                  >
-                    <span>{(r.distanceToUserCoordinates / 1000).toFixed(2)} km</span>
-                    <span className={`material-symbol--container material-symbols-outlined`.trim()}>
-                      open_in_new
-                    </span>
-                  </AnchorWrapper>}
-              </div>
-            ))
-            : data?.data.length === 0 ?
-              <NoSearchResults /> :
-              null
-        }
+                  <JumpingDots />
+                </div> :
+                <div
+                  className={styles["new-game-form--form--search-result--container-loading"]}
+                >
+                  {hasNextPage ? <span>Lataa lisää</span> : <span>Ei hakutuloksia</span>}
+                </div>}
+            </SearchDropdownMenu.Item>,] :
+            null}
       </SearchDropdownMenu>
       <UseLocation
         onClick={handleClickUseLocation}
         setLocation={setLocation}
       />
+      <button onClick={() => fetchNextPage()}>fetch more</button>
     </div>
   );
 };

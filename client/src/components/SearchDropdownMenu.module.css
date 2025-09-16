@@ -19,6 +19,11 @@
   cursor: pointer;
 }
 
+.list--item-disabled {
+  pointer-events: none;
+  cursor: auto;
+}
+
 .list--item:hover {
   background-color: var(--stroke-weak--lighter);
 }
