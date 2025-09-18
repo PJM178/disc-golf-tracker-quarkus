@@ -4,6 +4,7 @@ import styles from "./SearchDropdownMenu.module.css";
 interface SearchDropdownMenuProps {
   children: React.ReactNode;
   anchorElement: HTMLElement | null;
+  listRef?: React.RefObject<HTMLUListElement | null>;
   setSelectedIndex: React.Dispatch<React.SetStateAction<string | null>>;
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -15,6 +16,7 @@ interface ItemProps {
   id?: string;
   callback?: () => void;
   disabled?: boolean;
+  className?: string;
   children: React.ReactNode;
 }
 
@@ -42,11 +44,13 @@ const SearchDropdownMenu = (props: SearchDropdownMenuProps) => {
   };
 
   const items = useMemo(() => {
-    const result: { id?: string, callback?: () => void; disabled?: boolean, element: React.ReactNode }[] = [];
+    const result: { id?: string; callback?: () => void; disabled?: boolean; className?: string; element: React.ReactNode }[] = [];
 
     React.Children.forEach(children, (child) => {
       if (isDropdownItem(child)) {
-        result.push({ id: child.props.id, callback: child.props.callback, disabled: child.props.disabled, element: child.props.children });
+        result.push({ id: child.props.id, callback: child.props.callback, disabled: child.props.disabled, element: child.props.children,
+          className: child.props.className,
+         });
       }
     });
 
@@ -87,11 +91,12 @@ const SearchDropdownMenu = (props: SearchDropdownMenuProps) => {
         <ul
           className={`${styles["list--container"]} ${ulClass ? ulClass : ""}`.trim()}
           style={{ top: (rect.top + rect.height) + "px", width: rect.width + "px" }}
+          ref={props.listRef}
         >
           {items.map((item, i) => (
             <li
               key={i}
-              className={`${styles["list--item"]}  ${liClass ? liClass : ""} ${item.disabled ? styles["list--item-disabled"] : ""}`.trim()}
+              className={`${styles["list--item"]} ${liClass ? liClass : ""} ${item.disabled ? styles["list--item-disabled"] : ""} ${item.className ?? ""}`.trim()}
               onClick={(e) => handleClickElement(e, item.id, item.callback)}
               data-ignore={item.callback ? true : false}
             >

@@ -17,6 +17,7 @@ import useSearch from "@/hooks/useSearch";
 import { keepPreviousData, useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { AnchorWrapper } from "./Wrappers";
 import React from "react";
+import useInfiniteScroll from "@/hooks/useInifniteScroll";
 
 interface AddPlayerInputProps {
   index: number;
@@ -98,6 +99,7 @@ const FindCourse = () => {
   const [isListVisible, setIsListVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState<string | null>(null);
   const [location, setLocation] = useState<Coordinates | null>(null);
+  const searchDropdownMenuUlRef = useRef<HTMLUListElement | null>(null);
 
   const fetchCoursesTextCursor = useCallback(async (query: string, nextCursor: TextCursor | null) => {
     if (query.length > 2) {
@@ -152,34 +154,16 @@ const FindCourse = () => {
     }
   }, []);
 
-  const {
-    data: IData,
-    error: IError,
-    fetchNextPage,
-    hasNextPage,
-    isFetching,
-    isFetchingNextPage,
-    status,
-    isLoading: ILoading,
-  } = useInfiniteQuery({
-    queryKey: ['courses', location, location?.lat, location?.lon, debouncedValue],
-    queryFn: ({ pageParam }) => fetchCoursesInfinite(location ? `${location.lat + location.lon}` : debouncedValue, location, pageParam),
-    initialPageParam: { distance: 0, uuid: "" },
-    getNextPageParam: (lastPage) => lastPage.nextCursor,
-    enabled: debouncedValue.length > 2 || !!location,
-    staleTime: 60000,
-  });
+  const textQueryValue = locationName === "" ? "" : debouncedValue;
 
   const textSearchQuery = useInfiniteQuery({
-    queryKey: ["courses", "text", debouncedValue],
-    queryFn: ({ pageParam }) => fetchCoursesTextCursor(debouncedValue, pageParam),
+    queryKey: ["courses", "text", textQueryValue],
+    queryFn: ({ pageParam }) => fetchCoursesTextCursor(textQueryValue, pageParam),
     initialPageParam: { uuid: "" },
     getNextPageParam: (lastPage) => lastPage?.nextCursor,
-    enabled: debouncedValue.length > 2,
+    enabled: textQueryValue.length > 2,
     staleTime: 1000 * 60,
   });
-
-  console.log(textSearchQuery.data);
 
   const infiniteLocationQuery = useInfiniteQuery({
     queryKey: ["Courses", "location", location, location?.lat, location?.lon],
@@ -190,17 +174,15 @@ const FindCourse = () => {
     staleTime: 60000,
   });
 
-  console.log(infiniteLocationQuery.data);
+  console.log(infiniteLocationQuery);
+  console.log(searchDropdownMenuUlRef.current);
 
-  // console.log(IData);
-  // console.log(isFetching);
-  // console.log(isFetchingNextPage);
-  // console.log(hasNextPage);
-  // console.log(ILoading);
+  const { observerRef } = useInfiniteScroll<HTMLDivElement>({ onIntersect: infiniteLocationQuery.fetchNextPage, enabled: infiniteLocationQuery.hasNextPage && !infiniteLocationQuery.isFetching, root: searchDropdownMenuUlRef.current });
+
   const handleSearchField = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLocationName(e.target.value);
   };
-  console.log(IData);
+
   const handleFocus = () => {
     setIsListVisible(true);
   };
@@ -213,13 +195,115 @@ const FindCourse = () => {
 
   const handleClickUseLocation = () => {
     setLocationName("");
-    console.log("here");
+
     if (inputRef.current) {
       inputRef.current.focus();
     }
   }
-  console.log(location);
-  console.log(locationName);
+
+  //TODO: Loading element here and also no more hits elements
+
+  const renderStates = ({ isLoading, hasNextPage, isNoHits, shouldHaveMore }: { isLoading?: boolean, hasNextPage?: boolean, isNoHits?: boolean, shouldHaveMore?: boolean }) => {
+    if (isLoading) {
+      return (
+        <SearchDropdownMenu.Item key="data-state">
+          <div
+            className={styles["new-game-form--form--search-result--container-loading"]}
+          >
+            <JumpingDots />
+          </div>
+        </SearchDropdownMenu.Item>
+      );
+    }
+
+    if (isNoHits) {
+      return (
+        <SearchDropdownMenu.Item key="data-state">
+          <div
+            className={styles["new-game-form--form--search-result--container-loading"]}
+          >
+            <span>Ei hakutuloksia</span>
+          </div>
+        </SearchDropdownMenu.Item>
+      );
+    }
+
+    if (shouldHaveMore) {
+      console.log(hasNextPage);
+      return (
+        <SearchDropdownMenu.Item key="data-state">
+          <div
+            className={styles["new-game-form--form--search-result--container-loading"]}
+          >
+            {hasNextPage ? <span>Lataa lisää</span> : <span>Ei enempää ratoja</span>}
+          </div>
+        </SearchDropdownMenu.Item>
+      );
+    }
+
+    return null;
+  };
+  console.log(infiniteLocationQuery.data);
+  const renderData = (locationData: typeof infiniteLocationQuery.data, textData: typeof textSearchQuery.data) => {
+    if (locationData) {
+      return (
+        [...locationData.pages.flatMap((group) =>
+          group?.data.map((r) => (
+            <SearchDropdownMenu.Item key={r.uuid} id={r.uuid}>
+              <div className={styles["new-game-form--form--search-result--container"]}>
+                <div className={styles["new-game-form--form--search-result--container-info"]}>
+                  <span>{r.name}</span>
+                  <span className="subtext">
+                    {r.address}, {r.postalCode} {r.city}
+                  </span>
+                </div>
+                <AnchorWrapper
+                  href={`https://www.google.com/maps/place/${r.lat},${r.lon}`}
+                  target="_blank"
+                  className={styles["new-game-form--form--search-result--container-location"]}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <span>{(r.distanceToUserCoordinates / 1000).toFixed(2)} km</span>
+                  <span className="material-symbol--container material-symbols-outlined">
+                    open_in_new
+                  </span>
+                </AnchorWrapper>
+              </div>
+            </SearchDropdownMenu.Item>
+          ))
+        ),]
+      );
+    }
+
+    if (textData) {
+      return (
+        [...textData.pages.flatMap((group) =>
+          group?.data.map((r) => (
+            <SearchDropdownMenu.Item key={r.uuid} id={r.uuid}>
+              <div className={styles["new-game-form--form--search-result--container"]}>
+                <div className={styles["new-game-form--form--search-result--container-info"]}>
+                  <span>{r.name}</span>
+                  <span className="subtext">
+                    {r.address}, {r.postalCode} {r.city}
+                  </span>
+                </div>
+              </div>
+            </SearchDropdownMenu.Item>
+          ))
+        ),]
+      );
+    }
+
+    return null;
+  };
+
+  const data = renderData(infiniteLocationQuery.data, textSearchQuery.data);
+
+  // isEnabled property value is controller by debouncedValue and location variables and
+  // if one of these variables holds a value, other value is null or in the case of string length of 0
+  // If the logic of these variables is changed, this should also be changed or rethought
+  const queryObject = infiniteLocationQuery.isEnabled ? infiniteLocationQuery : textSearchQuery;
+  console.log("hey", queryObject.status !== "pending");
   return (
     <div>
       <TextField
@@ -234,66 +318,34 @@ const FindCourse = () => {
       />
       <SearchDropdownMenu
         anchorElement={inputRef.current}
+        listRef={searchDropdownMenuUlRef}
         setSelectedIndex={setSelectedIndex}
         isOpen={isListVisible}
         setIsOpen={setIsListVisible}
-        liClass={ILoading || !IData?.pages.length ? styles["li-class"] : undefined}
+        // TODO: Change this behavior to be as a prop for SearchDropdownMenu.Item since this is too obscure to 
+        // control loading 
+        liClass={queryObject.isLoading || !data?.length ? styles["li-class"] : undefined}
       >
-        {ILoading ?
+        {queryObject.isLoading ?
           <SearchDropdownMenu.Item>
-            <div
-              className={styles["new-game-form--form--search-result--container-loading"]}
-            >
-              <JumpingDots />
-            </div>
+            {renderStates({ isLoading: true })}
           </SearchDropdownMenu.Item> :
-          IData ?
-            [...IData.pages.flatMap((group) =>
-              group.data.map((r) => (
-                <SearchDropdownMenu.Item key={r.uuid} id={r.uuid}>
-                  <div className={styles["new-game-form--form--search-result--container"]}>
-                    <div className={styles["new-game-form--form--search-result--container-info"]}>
-                      <span>{r.name}</span>
-                      <span className="subtext">
-                        {r.address}, {r.postalCode} {r.city}
-                      </span>
-                    </div>
-                    {location && (
-                      <AnchorWrapper
-                        href={`https://www.google.com/maps/place/${r.lat},${r.lon}`}
-                        target="_blank"
-                        className={styles["new-game-form--form--search-result--container-location"]}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <span>{(r.distanceToUserCoordinates / 1000).toFixed(2)} km</span>
-                        <span className="material-symbol--container material-symbols-outlined">
-                          open_in_new
-                        </span>
-                      </AnchorWrapper>
-                    )}
-                  </div>
-                </SearchDropdownMenu.Item>
-              ))
-            ),
-            (location || IData?.pages[0].data.length === 0) && <SearchDropdownMenu.Item key="fetch-more" callback={fetchNextPage} disabled={isFetchingNextPage || !hasNextPage}>
-              {isFetchingNextPage ?
-                <div
-                  className={styles["new-game-form--form--search-result--container-loading"]}
-                >
-                  <JumpingDots />
-                </div> :
-                <div
-                  className={styles["new-game-form--form--search-result--container-loading"]}
-                >
-                  {hasNextPage ? <span>Lataa lisää</span> : <span>Ei hakutuloksia</span>}
-                </div>}
-            </SearchDropdownMenu.Item>,] :
+          data ?
+            [...data,
+            renderStates({ isLoading: queryObject.isFetching, isNoHits: !data.length && queryObject.isFetched, shouldHaveMore: !textSearchQuery.isEnabled && !queryObject.isPending, hasNextPage: queryObject.hasNextPage }),
+            queryObject.hasNextPage ?
+              <SearchDropdownMenu.Item key={"load more"} className={styles["observer-element"]}>
+                <div ref={observerRef}></div>
+              </SearchDropdownMenu.Item> :
+              null,] :
             null}
       </SearchDropdownMenu>
       <UseLocation
         onClick={handleClickUseLocation}
         setLocation={setLocation}
       />
+      {infiniteLocationQuery.data && [...infiniteLocationQuery.data.pages.flatMap((page) =>
+        page?.data.map((c) => <div key={c.uuid}>{c.name}</div>))]}
       <button onClick={() => fetchNextPage()}>fetch more</button>
     </div>
   );

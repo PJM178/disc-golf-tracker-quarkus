@@ -110,3 +110,7 @@
 .li-class {
   pointer-events: none;
 }
+
+.observer-element {
+  padding: 0 !important;
+}

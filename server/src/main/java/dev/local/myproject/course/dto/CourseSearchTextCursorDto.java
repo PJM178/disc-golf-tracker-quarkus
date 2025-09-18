@@ -3,6 +3,8 @@ package dev.local.myproject.course.dto;
 import java.util.List;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class CourseSearchTextCursorDto {
     public List<CourseDto> data;
     public Cursor nextCursor;
@@ -21,7 +23,7 @@ public class CourseSearchTextCursorDto {
 
     private static class Cursor {
 
-        @SuppressWarnings("unused")
+        @JsonProperty
         public UUID uuid;
 
         private Cursor(UUID uuid) {
