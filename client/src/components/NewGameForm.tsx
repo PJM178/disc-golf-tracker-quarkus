@@ -9,12 +9,11 @@ import SearchDropdownMenu from "./SearchDropdownMenu";
 import UseLocation from "./UseLocation";
 import { Coordinates } from "@/hooks/useGeolocation";
 import {
-  CourseLocationSearch, CourseTextSearch, CursorPaginatedCourseLocationSearch, CursorPaginatedCourseTextSearch,
+  CursorPaginatedCourseLocationSearch, CursorPaginatedCourseTextSearch,
   LocationCursor, TextCursor
 } from "@/types/course";
 import { JumpingDots } from "./Loading";
-import useSearch from "@/hooks/useSearch";
-import { keepPreviousData, useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { AnchorWrapper } from "./Wrappers";
 import React from "react";
 import useInfiniteScroll from "@/hooks/useInifniteScroll";
@@ -81,16 +80,6 @@ const AddPlayerInput = memo(function AddPlayerInput(props: AddPlayerInputProps) 
     </div>
   );
 });
-
-const NoSearchResults = () => {
-  return (
-    <div
-      className={styles["new-game-form--form--search-result--container-loading"]}
-    >
-      <span>Ei hakutuloksia</span>
-    </div>
-  );
-}
 
 const FindCourse = () => {
   const [locationName, setLocationName] = useState<string>("");
@@ -201,9 +190,19 @@ const FindCourse = () => {
     }
   }
 
-  //TODO: Loading element here and also no more hits elements
+  const renderStates = ({ isLoading, hasNextPage, isNoHits, shouldHaveMore, isError }: { isLoading?: boolean, hasNextPage?: boolean, isNoHits?: boolean, shouldHaveMore?: boolean, isError?: boolean }) => {
+    if (isError) {
+      return (
+        <SearchDropdownMenu.Item key="data-state">
+          <div
+            className={styles["new-game-form--form--search-result--container-loading"]}
+          >
+            <span>Jokin meni pieleen, koita myöhemmin uudestaan</span>
+          </div>
+        </SearchDropdownMenu.Item>
+      );
+    }
 
-  const renderStates = ({ isLoading, hasNextPage, isNoHits, shouldHaveMore }: { isLoading?: boolean, hasNextPage?: boolean, isNoHits?: boolean, shouldHaveMore?: boolean }) => {
     if (isLoading) {
       return (
         <SearchDropdownMenu.Item key="data-state">
@@ -243,7 +242,7 @@ const FindCourse = () => {
 
     return null;
   };
-  console.log(infiniteLocationQuery.data);
+
   const renderData = (locationData: typeof infiniteLocationQuery.data, textData: typeof textSearchQuery.data) => {
     if (locationData) {
       return (
@@ -303,7 +302,7 @@ const FindCourse = () => {
   // if one of these variables holds a value, other value is null or in the case of string length of 0
   // If the logic of these variables is changed, this should also be changed or rethought
   const queryObject = infiniteLocationQuery.isEnabled ? infiniteLocationQuery : textSearchQuery;
-  console.log("hey", queryObject.status !== "pending");
+
   return (
     <div>
       <TextField
@@ -327,26 +326,23 @@ const FindCourse = () => {
         liClass={queryObject.isLoading || !data?.length ? styles["li-class"] : undefined}
       >
         {queryObject.isLoading ?
-          <SearchDropdownMenu.Item>
-            {renderStates({ isLoading: true })}
-          </SearchDropdownMenu.Item> :
-          data ?
-            [...data,
-            renderStates({ isLoading: queryObject.isFetching, isNoHits: !data.length && queryObject.isFetched, shouldHaveMore: !textSearchQuery.isEnabled && !queryObject.isPending, hasNextPage: queryObject.hasNextPage }),
-            queryObject.hasNextPage ?
-              <SearchDropdownMenu.Item key={"load more"} className={styles["observer-element"]}>
-                <div ref={observerRef}></div>
-              </SearchDropdownMenu.Item> :
-              null,] :
-            null}
+          renderStates({ isLoading: true }) :
+          queryObject.isError ?
+            renderStates({ isError: true }) :
+            data ?
+              [...data,
+              renderStates({ isLoading: queryObject.isFetching, isNoHits: !data.length && queryObject.isFetched, shouldHaveMore: !textSearchQuery.isEnabled && !queryObject.isPending, hasNextPage: queryObject.hasNextPage }),
+              queryObject.hasNextPage ?
+                <SearchDropdownMenu.Item key={"load more"} className={styles["observer-element"]}>
+                  <div ref={observerRef}></div>
+                </SearchDropdownMenu.Item> :
+                null,] :
+              null}
       </SearchDropdownMenu>
       <UseLocation
         onClick={handleClickUseLocation}
         setLocation={setLocation}
       />
-      {infiniteLocationQuery.data && [...infiniteLocationQuery.data.pages.flatMap((page) =>
-        page?.data.map((c) => <div key={c.uuid}>{c.name}</div>))]}
-      <button onClick={() => fetchNextPage()}>fetch more</button>
     </div>
   );
 };

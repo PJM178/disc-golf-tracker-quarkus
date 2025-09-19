@@ -37,3 +37,8 @@ export interface CursorPaginatedCourseTextSearch {
   data: CourseTextSearch[];
   nextCursor: TextCursor | null;
 }
+
+export interface TanstackQueryErrorObject extends Error {
+  status?: number;
+  statusText?: string;
+}
