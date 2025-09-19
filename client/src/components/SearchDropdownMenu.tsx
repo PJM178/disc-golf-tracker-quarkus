@@ -48,9 +48,10 @@ const SearchDropdownMenu = (props: SearchDropdownMenuProps) => {
 
     React.Children.forEach(children, (child) => {
       if (isDropdownItem(child)) {
-        result.push({ id: child.props.id, callback: child.props.callback, disabled: child.props.disabled, element: child.props.children,
+        result.push({
+          id: child.props.id, callback: child.props.callback, disabled: child.props.disabled, element: child.props.children,
           className: child.props.className,
-         });
+        });
       }
     });
 

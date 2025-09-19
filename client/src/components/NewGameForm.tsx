@@ -114,8 +114,6 @@ const FindCourse = () => {
     }
   }, []);
 
-  // const { isLoading, data, error } = useSearch({ query: location ? `${location.lat + location.lon}` : debouncedValue, queryFn: (query) => fetchCourses(query, location), staleTime: 1000 * 60 });
-
   const fetchCoursesLocationCursor = useCallback(async (location: Coordinates | null, nextCursor: LocationCursor | null) => {
     console.log("called");
     if (location) {
@@ -163,9 +161,6 @@ const FindCourse = () => {
     staleTime: 60000,
   });
 
-  console.log(infiniteLocationQuery);
-  console.log(searchDropdownMenuUlRef.current);
-
   const { observerRef } = useInfiniteScroll<HTMLDivElement>({ onIntersect: infiniteLocationQuery.fetchNextPage, enabled: infiniteLocationQuery.hasNextPage && !infiniteLocationQuery.isFetching, root: searchDropdownMenuUlRef.current });
 
   const handleSearchField = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -193,7 +188,7 @@ const FindCourse = () => {
   const renderStates = ({ isLoading, hasNextPage, isNoHits, shouldHaveMore, isError }: { isLoading?: boolean, hasNextPage?: boolean, isNoHits?: boolean, shouldHaveMore?: boolean, isError?: boolean }) => {
     if (isError) {
       return (
-        <SearchDropdownMenu.Item key="data-state">
+        <SearchDropdownMenu.Item key="data-state" disabled={true}>
           <div
             className={styles["new-game-form--form--search-result--container-loading"]}
           >
@@ -205,7 +200,7 @@ const FindCourse = () => {
 
     if (isLoading) {
       return (
-        <SearchDropdownMenu.Item key="data-state">
+        <SearchDropdownMenu.Item key="data-state" disabled={true}>
           <div
             className={styles["new-game-form--form--search-result--container-loading"]}
           >
@@ -217,7 +212,7 @@ const FindCourse = () => {
 
     if (isNoHits) {
       return (
-        <SearchDropdownMenu.Item key="data-state">
+        <SearchDropdownMenu.Item key="data-state" disabled={true}>
           <div
             className={styles["new-game-form--form--search-result--container-loading"]}
           >
@@ -228,9 +223,8 @@ const FindCourse = () => {
     }
 
     if (shouldHaveMore) {
-      console.log(hasNextPage);
       return (
-        <SearchDropdownMenu.Item key="data-state">
+        <SearchDropdownMenu.Item key="data-state" disabled={true}>
           <div
             className={styles["new-game-form--form--search-result--container-loading"]}
           >
