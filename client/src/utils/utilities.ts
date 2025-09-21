@@ -5,3 +5,9 @@ export function generateRandomId(length = 8) {
 export function capitalizeFirstLetter(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
+
+// Check for navigation keys for keyboard events
+export const NAVIGATION_KEYS = new Set([
+  "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Home", "End", 
+  "PageUp", "PageDown", "Insert", "Delete", "Tab", "Escape"
+]);

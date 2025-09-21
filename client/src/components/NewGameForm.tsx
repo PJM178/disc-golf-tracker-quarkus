@@ -1,5 +1,5 @@
 import { Game, useGameState, Hole } from "@/context/GameStateContext";
-import { generateRandomId } from "@/utils/utilities";
+import { generateRandomId, NAVIGATION_KEYS } from "@/utils/utilities";
 import { useState, useEffect, memo, useRef, useCallback } from "react";
 import { Button, Switch } from "./Buttons";
 import styles from "./NewGameForm.module.css"
@@ -171,7 +171,15 @@ const FindCourse = () => {
     setIsListVisible(true);
   };
 
-  const handleKeyDown = () => {
+  const handleBlur = () => {
+    setIsListVisible(false);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (NAVIGATION_KEYS.has(e.key) || e.key === "Enter") {
+      return;
+    }
+
     if (location) {
       setLocation(null);
     }
@@ -308,6 +316,7 @@ const FindCourse = () => {
         ref={inputRef}
         onKeyDown={handleKeyDown}
         onFocus={handleFocus}
+        onBlur={handleBlur}
       />
       <SearchDropdownMenu
         anchorElement={inputRef.current}
@@ -315,9 +324,6 @@ const FindCourse = () => {
         setSelectedIndex={setSelectedIndex}
         isOpen={isListVisible}
         setIsOpen={setIsListVisible}
-        // TODO: Change this behavior to be as a prop for SearchDropdownMenu.Item since this is too obscure to 
-        // control loading 
-        liClass={queryObject.isLoading || !data?.length ? styles["li-class"] : undefined}
       >
         {queryObject.isLoading ?
           renderStates({ isLoading: true }) :
@@ -327,7 +333,7 @@ const FindCourse = () => {
               [...data,
               renderStates({ isLoading: queryObject.isFetching, isNoHits: !data.length && queryObject.isFetched, shouldHaveMore: !textSearchQuery.isEnabled && !queryObject.isPending, hasNextPage: queryObject.hasNextPage }),
               queryObject.hasNextPage ?
-                <SearchDropdownMenu.Item key={"load more"} className={styles["observer-element"]}>
+                <SearchDropdownMenu.Item key={"load more"} className={styles["observer-element"]} disabled={true}>
                   <div ref={observerRef}></div>
                 </SearchDropdownMenu.Item> :
                 null,] :

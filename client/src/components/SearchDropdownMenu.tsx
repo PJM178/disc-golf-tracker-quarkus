@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import styles from "./SearchDropdownMenu.module.css";
+import { NAVIGATION_KEYS } from "@/utils/utilities";
 
 interface SearchDropdownMenuProps {
   children: React.ReactNode;
@@ -29,6 +30,8 @@ const Item = ({ children }: ItemProps) => <>{children}</>;
 const SearchDropdownMenu = (props: SearchDropdownMenuProps) => {
   const { children, anchorElement, setSelectedIndex, isOpen, setIsOpen, liClass, ulClass } = props;
   const containerRef = useRef<HTMLDivElement>(null);
+  const selectedItemIndexRef = useRef<number>(null);
+  const ulRef = useRef<HTMLUListElement>(null);
   const [rect, setRect] = useState<{ top: number; left: number; height: number; width: number } | null>(null);
 
   const handleClickElement = (e: React.MouseEvent<HTMLLIElement, MouseEvent>, value?: string, callback?: () => void) => {
@@ -43,19 +46,21 @@ const SearchDropdownMenu = (props: SearchDropdownMenuProps) => {
     setIsOpen(false);
   };
 
-  const items = useMemo(() => {
-    const result: { id?: string; callback?: () => void; disabled?: boolean; className?: string; element: React.ReactNode }[] = [];
+  const { items, filteredItems } = useMemo(() => {
+    const items: { id?: string; callback?: () => void; disabled?: boolean; className?: string; element: React.ReactNode }[] = [];
 
     React.Children.forEach(children, (child) => {
       if (isDropdownItem(child)) {
-        result.push({
+        items.push({
           id: child.props.id, callback: child.props.callback, disabled: child.props.disabled, element: child.props.children,
           className: child.props.className,
         });
       }
     });
 
-    return result;
+    const filteredItems = items.filter((i) => !i.disabled);
+
+    return { items, filteredItems };
   }, [children]);
 
   useEffect(() => {
@@ -73,15 +78,65 @@ const SearchDropdownMenu = (props: SearchDropdownMenuProps) => {
     setIsOpen(false);
   }, [anchorElement, setIsOpen]);
 
+  const handleKeydownEvent = useCallback((e: KeyboardEvent) => {
+    if (NAVIGATION_KEYS.has(e.key)) {
+      if (!ulRef.current) return;
+
+      const childList = ulRef.current.children;
+
+      if (e.key === "ArrowDown") {
+        if (selectedItemIndexRef.current === null || selectedItemIndexRef.current === filteredItems.length - 1) {
+          selectedItemIndexRef.current = 0;
+        } else {
+          selectedItemIndexRef.current += 1;
+        }
+
+        if (selectedItemIndexRef.current !== null) {
+          if (selectedItemIndexRef.current === 0) {
+            childList[filteredItems.length - 1].classList.remove(styles["active"]);
+          } else {
+            childList[selectedItemIndexRef.current - 1].classList.remove(styles["active"]);
+          }
+        }
+
+        childList[selectedItemIndexRef.current].classList.add(styles["active"]);
+      } else if (e.key === "ArrowUp") {
+        if (selectedItemIndexRef.current === null || selectedItemIndexRef.current === 0) {
+          selectedItemIndexRef.current = filteredItems.length - 1;
+        } else {
+          selectedItemIndexRef.current -= 1;
+        }
+
+        if (selectedItemIndexRef.current !== null) {
+          if (selectedItemIndexRef.current === filteredItems.length - 1) {
+            childList[0].classList.remove(styles["active"]);
+          } else {
+            childList[selectedItemIndexRef.current + 1].classList.remove(styles["active"]);
+          }
+        }
+
+        childList[selectedItemIndexRef.current].classList.add(styles["active"]);
+      }
+    }
+  }, [filteredItems]);
+
   useEffect(() => {
     if (isOpen) {
+      // Click event for closing the dropdown menu
       document.addEventListener("click", handleClickEvent);
+
+      // Keyboard event for menu navigation
+      document.addEventListener("keydown", handleKeydownEvent);
     } else {
       document.removeEventListener("click", handleClickEvent);
+      document.removeEventListener("keydown", handleKeydownEvent);
     }
 
-    return () => document.removeEventListener("click", handleClickEvent);
-  }, [isOpen, handleClickEvent]);
+    return () => {
+      document.removeEventListener("click", handleClickEvent);
+      document.removeEventListener("keydown", handleKeydownEvent);
+    };
+  }, [isOpen, handleClickEvent, handleKeydownEvent]);
 
   return (
     <div
@@ -92,7 +147,13 @@ const SearchDropdownMenu = (props: SearchDropdownMenuProps) => {
         <ul
           className={`${styles["list--container"]} ${ulClass ? ulClass : ""}`.trim()}
           style={{ top: (rect.top + rect.height) + "px", width: rect.width + "px" }}
-          ref={props.listRef}
+          ref={(el) => {
+            if (props.listRef) {
+              props.listRef.current = el;
+            }
+
+            ulRef.current = el;
+          }}
         >
           {items.map((item, i) => (
             <li
