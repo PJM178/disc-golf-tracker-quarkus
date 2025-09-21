@@ -89,6 +89,7 @@ const FindCourse = () => {
   const [selectedIndex, setSelectedIndex] = useState<string | null>(null);
   const [location, setLocation] = useState<Coordinates | null>(null);
   const searchDropdownMenuUlRef = useRef<HTMLUListElement | null>(null);
+  const [selectedCourse, setSelectedCourse] = useState<{ id: string } | null>(null);
 
   const fetchCoursesTextCursor = useCallback(async (query: string, nextCursor: TextCursor | null) => {
     if (query.length > 2) {
@@ -115,7 +116,6 @@ const FindCourse = () => {
   }, []);
 
   const fetchCoursesLocationCursor = useCallback(async (location: Coordinates | null, nextCursor: LocationCursor | null) => {
-    console.log("called");
     if (location) {
       const url = new URL("http://localhost:8080/courses/search/location");
 
@@ -171,12 +171,16 @@ const FindCourse = () => {
     setIsListVisible(true);
   };
 
-  const handleBlur = () => {
-    setIsListVisible(false);
+  const handleSelectCourse = (params: { id: string }) => {
+    setSelectedCourse(params);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (NAVIGATION_KEYS.has(e.key) || e.key === "Enter") {
+    if (!isListVisible) {
+      setIsListVisible(true);
+    }
+
+    if (NAVIGATION_KEYS.has(e.key)) {
       return;
     }
 
@@ -250,7 +254,7 @@ const FindCourse = () => {
       return (
         [...locationData.pages.flatMap((group) =>
           group?.data.map((r) => (
-            <SearchDropdownMenu.Item key={r.uuid} id={r.uuid}>
+            <SearchDropdownMenu.Item key={r.uuid} id={r.uuid} callback={() => handleSelectCourse({ id: r.uuid })}>
               <div className={styles["new-game-form--form--search-result--container"]}>
                 <div className={styles["new-game-form--form--search-result--container-info"]}>
                   <span>{r.name}</span>
@@ -280,7 +284,7 @@ const FindCourse = () => {
       return (
         [...textData.pages.flatMap((group) =>
           group?.data.map((r) => (
-            <SearchDropdownMenu.Item key={r.uuid} id={r.uuid}>
+            <SearchDropdownMenu.Item key={r.uuid} id={r.uuid} callback={() => handleSelectCourse({ id: r.uuid })}>
               <div className={styles["new-game-form--form--search-result--container"]}>
                 <div className={styles["new-game-form--form--search-result--container-info"]}>
                   <span>{r.name}</span>
@@ -316,7 +320,6 @@ const FindCourse = () => {
         ref={inputRef}
         onKeyDown={handleKeyDown}
         onFocus={handleFocus}
-        onBlur={handleBlur}
       />
       <SearchDropdownMenu
         anchorElement={inputRef.current}

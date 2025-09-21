@@ -39,8 +39,6 @@ const SearchDropdownMenu = (props: SearchDropdownMenuProps) => {
 
     if (callback) {
       callback();
-
-      return;
     }
 
     setIsOpen(false);
@@ -80,12 +78,20 @@ const SearchDropdownMenu = (props: SearchDropdownMenuProps) => {
 
   const handleKeydownEvent = useCallback((e: KeyboardEvent) => {
     if (NAVIGATION_KEYS.has(e.key)) {
-      if (!ulRef.current) return;
+      if (!ulRef.current || !filteredItems.length) return;
+
+      if (e.key === "Enter") {
+        if (selectedItemIndexRef.current !== null) {
+          filteredItems[selectedItemIndexRef.current]?.callback?.();
+
+          setIsOpen(false);
+        }
+      };
 
       const childList = ulRef.current.children;
-
+      
       if (e.key === "ArrowDown") {
-        if (selectedItemIndexRef.current === null || selectedItemIndexRef.current === filteredItems.length - 1) {
+        if (selectedItemIndexRef.current === null || (filteredItems.length > 0 && selectedItemIndexRef.current === filteredItems.length - 1)) {
           selectedItemIndexRef.current = 0;
         } else {
           selectedItemIndexRef.current += 1;
@@ -118,21 +124,23 @@ const SearchDropdownMenu = (props: SearchDropdownMenuProps) => {
         childList[selectedItemIndexRef.current].classList.add(styles["active"]);
       }
     }
-  }, [filteredItems]);
+  }, [filteredItems, setIsOpen]);
 
   useEffect(() => {
     if (isOpen) {
       // Click event for closing the dropdown menu
       document.addEventListener("click", handleClickEvent);
-
+      
       // Keyboard event for menu navigation
       document.addEventListener("keydown", handleKeydownEvent);
     } else {
+      selectedItemIndexRef.current = null;
       document.removeEventListener("click", handleClickEvent);
       document.removeEventListener("keydown", handleKeydownEvent);
     }
 
     return () => {
+      selectedItemIndexRef.current = null;
       document.removeEventListener("click", handleClickEvent);
       document.removeEventListener("keydown", handleKeydownEvent);
     };
