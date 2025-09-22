@@ -81,6 +81,11 @@ const AddPlayerInput = memo(function AddPlayerInput(props: AddPlayerInputProps) 
   );
 });
 
+interface SelectedCourse {
+  id: string;
+  name: string;
+};
+
 const FindCourse = () => {
   const [locationName, setLocationName] = useState<string>("");
   const { debouncedValue } = useDebounce(locationName, 500);
@@ -89,7 +94,7 @@ const FindCourse = () => {
   const [selectedIndex, setSelectedIndex] = useState<string | null>(null);
   const [location, setLocation] = useState<Coordinates | null>(null);
   const searchDropdownMenuUlRef = useRef<HTMLUListElement | null>(null);
-  const [selectedCourse, setSelectedCourse] = useState<{ id: string } | null>(null);
+  const [selectedCourse, setSelectedCourse] = useState<SelectedCourse | null>(null);
 
   const fetchCoursesTextCursor = useCallback(async (query: string, nextCursor: TextCursor | null) => {
     if (query.length > 2) {
@@ -171,8 +176,10 @@ const FindCourse = () => {
     setIsListVisible(true);
   };
 
-  const handleSelectCourse = (params: { id: string }) => {
+  const handleSelectCourse = (params: SelectedCourse) => {
     setSelectedCourse(params);
+    setLocationName("");
+    setLocation(null);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -181,11 +188,19 @@ const FindCourse = () => {
     }
 
     if (NAVIGATION_KEYS.has(e.key)) {
-      return;
+      if (e.key === "Delete") {
+        setSelectedCourse(null);
+      } else {
+        return;
+      }
     }
 
     if (location) {
       setLocation(null);
+    }
+
+    if (selectedCourse) {
+      setSelectedCourse(null);
     }
   };
 
@@ -254,7 +269,7 @@ const FindCourse = () => {
       return (
         [...locationData.pages.flatMap((group) =>
           group?.data.map((r) => (
-            <SearchDropdownMenu.Item key={r.uuid} id={r.uuid} callback={() => handleSelectCourse({ id: r.uuid })}>
+            <SearchDropdownMenu.Item key={r.uuid} id={r.uuid} callback={() => handleSelectCourse({ id: r.uuid, name: r.name })}>
               <div className={styles["new-game-form--form--search-result--container"]}>
                 <div className={styles["new-game-form--form--search-result--container-info"]}>
                   <span>{r.name}</span>
@@ -284,7 +299,7 @@ const FindCourse = () => {
       return (
         [...textData.pages.flatMap((group) =>
           group?.data.map((r) => (
-            <SearchDropdownMenu.Item key={r.uuid} id={r.uuid} callback={() => handleSelectCourse({ id: r.uuid })}>
+            <SearchDropdownMenu.Item key={r.uuid} id={r.uuid} callback={() => handleSelectCourse({ id: r.uuid, name: r.name })}>
               <div className={styles["new-game-form--form--search-result--container"]}>
                 <div className={styles["new-game-form--form--search-result--container-info"]}>
                   <span>{r.name}</span>
@@ -308,14 +323,16 @@ const FindCourse = () => {
   // if one of these variables holds a value, other value is null or in the case of string length of 0
   // If the logic of these variables is changed, this should also be changed or rethought
   const queryObject = infiniteLocationQuery.isEnabled ? infiniteLocationQuery : textSearchQuery;
-
+  // TODO: if there is selected id of the course, display the course in the search box
+  // Think about what happens when text field is again focused in is written in - perhaps delete
+  //  the whole thing from the field with any key press
   return (
     <div>
       <TextField
         className={styles["new-game-form--form--text-field"]}
         variant="outlined"
         placeholder={location ? "Haetaan lähellä olevia ratoja" : "Etsi ratoja osoitteen perusteella"}
-        value={location ? "" : locationName}
+        value={selectedCourse ? selectedCourse.name : location ? "" : locationName}
         onChange={handleSearchField}
         ref={inputRef}
         onKeyDown={handleKeyDown}
