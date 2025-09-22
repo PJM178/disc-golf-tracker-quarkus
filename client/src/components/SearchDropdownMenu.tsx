@@ -106,6 +106,7 @@ const SearchDropdownMenu = (props: SearchDropdownMenuProps) => {
         }
 
         childList[selectedItemIndexRef.current].classList.add(styles["active"]);
+        childList[selectedItemIndexRef.current].scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
       } else if (e.key === "ArrowUp") {
         if (selectedItemIndexRef.current === null || selectedItemIndexRef.current === 0) {
           selectedItemIndexRef.current = filteredItems.length - 1;
@@ -122,10 +123,11 @@ const SearchDropdownMenu = (props: SearchDropdownMenuProps) => {
         }
 
         childList[selectedItemIndexRef.current].classList.add(styles["active"]);
+        childList[selectedItemIndexRef.current].scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
       }
     }
   }, [filteredItems, setIsOpen]);
-
+ 
   useEffect(() => {
     if (isOpen) {
       // Click event for closing the dropdown menu
@@ -140,7 +142,6 @@ const SearchDropdownMenu = (props: SearchDropdownMenuProps) => {
     }
 
     return () => {
-      selectedItemIndexRef.current = null;
       document.removeEventListener("click", handleClickEvent);
       document.removeEventListener("keydown", handleKeydownEvent);
     };

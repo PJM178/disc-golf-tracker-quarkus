@@ -323,9 +323,7 @@ const FindCourse = () => {
   // if one of these variables holds a value, other value is null or in the case of string length of 0
   // If the logic of these variables is changed, this should also be changed or rethought
   const queryObject = infiniteLocationQuery.isEnabled ? infiniteLocationQuery : textSearchQuery;
-  // TODO: if there is selected id of the course, display the course in the search box
-  // Think about what happens when text field is again focused in is written in - perhaps delete
-  //  the whole thing from the field with any key press
+
   return (
     <div>
       <TextField
